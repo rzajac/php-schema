@@ -1,0 +1,24 @@
+{
+  "name": "rzajac/schemadump",
+  "description": "Database schema exporter",
+  "keywords": ["database", "schema"],
+  "type": "library",
+  "license": "Apache License 2.0",
+  "require": {
+    "php": ">=5.5",
+    "rzajac/phptools": "0.3.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*",
+    "rzajac/php-test-helper": "0.3.*"
+  },
+  "bin": [
+    "schemadump"
+  ],
+  "autoload": {
+    "psr-4": {
+      "Kicaj\\SchemaDump\\": "src/",
+      "Kicaj\\Test\\SchemaDump\\": "test/"
+    }
+  }
+}

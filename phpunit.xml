@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true" bootstrap="test/bootstrap.php">
+    <php>
+        <var name="DB_HOST" value="127.0.0.1"/>
+        <var name="DB_PORT" value="3306"/>
+        <var name="DB_USERNAME" value="unitTest"/>
+        <var name="DB_PASSWORD" value="unitTestPass"/>
+        <var name="DB_DATABASE" value="test"/>
+        <var name="DB_DRIVER" value="mysql"/>
+
+        <var name="FIXTURE_DIRECTORY" value="test/fixtures"/>
+    </php>
+
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+            <exclude>
+                <directory>vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+
+    <testsuites>
+        <testsuite name="schema exporter tests" addUncoveredFilesFromWhitelist="true">
+            <directory>test</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

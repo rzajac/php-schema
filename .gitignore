@@ -1,0 +1,4 @@
+coverage
+.idea
+vendor
+db_config.php
