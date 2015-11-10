@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "daa65f563f3a67a602fee95256b472cd",
-    "content-hash": "fc9309c69aaf1bdfbf559bd7dd49d252",
+    "hash": "7ac05ffb3b8641958899ae99db2c63dc",
+    "content-hash": "0993397a9c8969bfc656dbcc8839009c",
     "packages": [
         {
             "name": "rzajac/phptools",

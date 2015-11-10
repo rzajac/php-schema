@@ -68,6 +68,7 @@ class MySQL implements SchemaGetter
 
     /** MySQL array types */
     const TYPE_ENUM = 'enum';
+    const TYPE_SET = 'set';
 
     /** MySQL date and time types */
     const TYPE_TIMESTAMP = 'timestamp';
@@ -367,7 +368,7 @@ class MySQL implements SchemaGetter
         // Set MySQL and PHP types for the column
         static::mySQLToPhpType($colDef, $colType);
 
-        if ($colDef->getDbType() === self::TYPE_ENUM) {
+        if (in_array($colDef->getDbType(), [self::TYPE_ENUM, self::TYPE_SET])) {
             $colType = $colType.' '.$colExtra;
         }
 
@@ -447,7 +448,7 @@ class MySQL implements SchemaGetter
 
         preg_match('/.*\((.*)\).*/', $typeDef, $matches);
 
-        if ($colDef->getDbType() === self::TYPE_ENUM) {
+        if (in_array($colDef->getDbType(), [self::TYPE_ENUM, self::TYPE_SET])) {
             $matches = explode(',', $matches[1]);
             foreach ($matches as &$value) {
                 $value = trim($value, '\'');
@@ -680,6 +681,13 @@ class MySQL implements SchemaGetter
             return;
         }
 
+        if (strpos($mysqlDef, self::TYPE_SET) === 0) {
+            $colDef
+                ->setPhpType(SchemaDump::PHP_TYPE_ARRAY)
+                ->setDbType(self::TYPE_SET);
+            return;
+        }
+
         throw new SchemaException('unknown type: '.$mysqlDef);
     }
 
@@ -797,6 +805,7 @@ class MySQL implements SchemaGetter
             case self::TYPE_VARBINARY:
             case self::TYPE_TIME:
             case self::TYPE_ENUM:
+            case self::TYPE_SET:
                 // No bounds
                 break;
 
@@ -853,3 +862,5 @@ class MySQL implements SchemaGetter
         return $rows;
     }
 }
+
+// `s` set('o','t') NOT NULL,

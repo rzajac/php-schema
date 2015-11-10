@@ -1075,8 +1075,35 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
         $this->assertSame('S', $colDef->getDefaultValue());
 
         $this->assertSame(['0', 'XS', 's p a c e'], $colDef->getValidValues());
+    }
 
+    /**
+     * @covers ::parseColumn
+     * @covers ::setColDefExtra
+     * @covers ::mySQLToPhpType
+     * @covers ::setTypeBounds
+     * @covers ::mySQLTypeLengths
+     */
+    public function test_parseColumn_set()
+    {
+        $colDefStr = '  `s` set(\'0\',\'XS\',\'s p a c e\') DEFAULT \'S\',';
+        $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        $this->assertSame('s', $colDef->getName());
+
+        $this->assertSame(SchemaDump::PHP_TYPE_ARRAY, $colDef->getPhpType());
+        $this->assertSame(MySQL::TYPE_SET, $colDef->getDbType());
+
+        $this->assertSame(null, $colDef->getMinLength());
+        $this->assertSame(null, $colDef->getMaxLength());
+
+        $this->assertSame(null, $colDef->getMinValue());
+        $this->assertSame(null, $colDef->getMaxValue());
+
+        $this->assertFalse($colDef->isNotNull());
+        $this->assertSame('S', $colDef->getDefaultValue());
+
+        $this->assertSame(['0', 'XS', 's p a c e'], $colDef->getValidValues());
     }
 
     /**
