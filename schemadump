@@ -31,8 +31,8 @@ foreach (
     }
 }
 
-use Kicaj\DBSchema\Cli;
-use Kicaj\DBSchema\SchemaDump;
+use Kicaj\SchemaDump\Cli;
+use Kicaj\SchemaDump\SchemaDump;
 
 $cliOptions = getopt(Cli::getCliShortOptions(), Cli::getCliLongOptions());
 
