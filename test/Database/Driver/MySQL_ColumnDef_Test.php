@@ -1057,12 +1057,12 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_enum()
     {
-        $colDefStr = '  `e` enum(\'0\',\'XS\',\'s p a c e\') DEFAULT \'S\',';
+        $colDefStr = '  `e` enum(\'0\',\'XS\',\'s p a c e\') DEFAULT \'XS\',';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
         $this->assertSame('e', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_ARRAY, $colDef->getPhpType());
+        $this->assertSame(SchemaDump::PHP_TYPE_STRING, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_ENUM, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -1072,7 +1072,7 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
         $this->assertSame(null, $colDef->getMaxValue());
 
         $this->assertFalse($colDef->isNotNull());
-        $this->assertSame('S', $colDef->getDefaultValue());
+        $this->assertSame('XS', $colDef->getDefaultValue());
 
         $this->assertSame(['0', 'XS', 's p a c e'], $colDef->getValidValues());
     }
@@ -1086,12 +1086,12 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_set()
     {
-        $colDefStr = '  `s` set(\'0\',\'XS\',\'s p a c e\') DEFAULT \'S\',';
+        $colDefStr = '  `s` set(\'0\',\'XS\',\'s p a c e\') DEFAULT \'0\',';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
         $this->assertSame('s', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_ARRAY, $colDef->getPhpType());
+        $this->assertSame(SchemaDump::PHP_TYPE_STRING, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_SET, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -1101,7 +1101,7 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
         $this->assertSame(null, $colDef->getMaxValue());
 
         $this->assertFalse($colDef->isNotNull());
-        $this->assertSame('S', $colDef->getDefaultValue());
+        $this->assertSame('0', $colDef->getDefaultValue());
 
         $this->assertSame(['0', 'XS', 's p a c e'], $colDef->getValidValues());
     }

@@ -684,14 +684,14 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_ENUM) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_ARRAY)
+                ->setPhpType(SchemaDump::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_ENUM);
             return;
         }
 
         if (strpos($mysqlDef, self::TYPE_SET) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_ARRAY)
+                ->setPhpType(SchemaDump::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_SET);
             return;
         }
