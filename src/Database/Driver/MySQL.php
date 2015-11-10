@@ -275,11 +275,19 @@ class MySQL implements SchemaGetter
      *
      * @param string $tableName The database table name
      *
+     * @throws SchemaException
+     *
      * @return TableDefinition
      */
     public function dbGetTableDefinition($tableName)
     {
-        $lines = explode("\n", $this->dbGetCreateStatement($tableName)['create']);
+        $create = $this->dbGetCreateStatement($tableName);
+
+        if (empty($create)) {
+            throw new SchemaException('no database table: '.$tableName);
+        }
+
+        $lines = explode("\n", $create['create']);
 
         // Remove CREATE TABLE line
         array_shift($lines);

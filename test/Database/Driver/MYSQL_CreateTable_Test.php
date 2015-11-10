@@ -132,4 +132,15 @@ class MYSQL_CreateTable_Test extends BaseTest
 
         $this->assertSame($expected, $tableDef->getIndexes());
     }
+
+    /**
+     * @covers ::dbGetTableDefinition
+     *
+     * @expectedException \Kicaj\SchemaDump\SchemaException
+     * @expectedExceptionMessage no database table: not_existing
+     */
+    public function test_dbGetTableDefinition_error()
+    {
+        $this->schema->dbGetTableDefinition('not_existing');
+    }
 }
