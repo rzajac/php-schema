@@ -70,11 +70,19 @@ class TableDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_addIndex()
     {
+        // Indexes definition
         $index1 = ['indexName1', 'PRIMARY', ['col1', 'col2'] ];
         $index2 = ['indexName2', 'UNIQUE', ['col3'] ];
         $index3 = ['indexName3', 'KEY', ['col4'] ];
 
+        // Columns for primary key
+        $col1 = new ColumnDefinition('col1', DbConnector::DB_DRIVER_MYSQL, 'testTable');
+        $col2 = new ColumnDefinition('col2', DbConnector::DB_DRIVER_MYSQL, 'testTable');
+
+        // Construct test table definition
         $td = TableDefinition::make('testTable');
+        $td->addColumn($col1);
+        $td->addColumn($col2);
         $td->addIndex($index1);
         $td->addIndex($index2);
         $td->addIndex($index3);

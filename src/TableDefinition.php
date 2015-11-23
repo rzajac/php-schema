@@ -109,6 +109,9 @@ class TableDefinition
     {
         if ($indexDefinition[1] == MySQL::INDEX_PRIMARY) {
             $this->primaryKey = $indexDefinition;
+            foreach ($indexDefinition[2] as $columnName) {
+                $this->columns[$columnName]->setIsPartOfPk(true);
+            }
         } else {
             $this->indexes[] = $indexDefinition;
         }

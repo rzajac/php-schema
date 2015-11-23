@@ -92,8 +92,8 @@ class MySQL_Test extends BaseTest
     public function connectionProvider()
     {
         return [
-            ['127.0.0.1', 'root', '', 'test', 3306, true, ''],
-            ['127.0.0.1', 'root', '', 'test2', 3306, false, "Unknown database 'test2'"],
+            [$GLOBALS['DB_HOST'], $GLOBALS['DB_USERNAME'], $GLOBALS['DB_PASSWORD'], $GLOBALS['DB_DATABASE'], 3306, true, ''],
+            [$GLOBALS['DB_HOST'], $GLOBALS['DB_USERNAME'], $GLOBALS['DB_PASSWORD'], 'not_existing', 3306, false, "'not_existing'"],
         ];
     }
 
