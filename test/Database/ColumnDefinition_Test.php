@@ -36,7 +36,7 @@ class ColumnDefinition_Test extends \PHPUnit_Framework_TestCase
      * @covers ::getTableName
      * @covers ::getDriverName
      */
-    public function test___construct_()
+    public function test___construct()
     {
         $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 

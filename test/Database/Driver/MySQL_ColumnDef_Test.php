@@ -141,7 +141,65 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
         $this->assertTrue($colDef->isUnsigned());
         $this->assertTrue($colDef->isNotNull());
 
-        $this->assertSame('123', $colDef->getDefaultValue());
+        $this->assertSame(123, $colDef->getDefaultValue());
+    }
+
+    /**
+     * @covers ::parseColumn
+     * @covers ::setColDefExtra
+     * @covers ::mySQLToPhpType
+     * @covers ::setTypeBounds
+     * @covers ::mySQLTypeLengths
+     */
+    public function test_parseColumn_int_default_null_last()
+    {
+        $colDefStr = '`col1` int(11) DEFAULT NULL';
+        $colDef = MySQL::parseColumn($colDefStr, 'testTable');
+
+        $this->assertSame('col1', $colDef->getName());
+
+        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(MySQL::TYPE_INT, $colDef->getDbType());
+
+        $this->assertSame(null, $colDef->getMinLength());
+        $this->assertSame(null, $colDef->getMaxLength());
+
+        $this->assertSame(-2147483648, $colDef->getMinValue());
+        $this->assertSame(2147483647, $colDef->getMaxValue());
+
+        $this->assertFalse($colDef->isUnsigned());
+        $this->assertFalse($colDef->isNotNull());
+
+        $this->assertSame(null, $colDef->getDefaultValue());
+    }
+
+    /**
+     * @covers ::parseColumn
+     * @covers ::setColDefExtra
+     * @covers ::mySQLToPhpType
+     * @covers ::setTypeBounds
+     * @covers ::mySQLTypeLengths
+     */
+    public function test_parseColumn_int_default_value_last()
+    {
+        $colDefStr = '`col1` int(11) DEFAULT \'123\'';
+        $colDef = MySQL::parseColumn($colDefStr, 'testTable');
+
+        $this->assertSame('col1', $colDef->getName());
+
+        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(MySQL::TYPE_INT, $colDef->getDbType());
+
+        $this->assertSame(null, $colDef->getMinLength());
+        $this->assertSame(null, $colDef->getMaxLength());
+
+        $this->assertSame(-2147483648, $colDef->getMinValue());
+        $this->assertSame(2147483647, $colDef->getMaxValue());
+
+        $this->assertFalse($colDef->isUnsigned());
+        $this->assertFalse($colDef->isNotNull());
+
+        $this->assertSame(123, $colDef->getDefaultValue());
     }
 
     /**
@@ -243,7 +301,7 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_int_unsigned_default_error()
     {
-        $colDefStr = '`col1` int(11) unsigned DEFAULT a';
+        $colDefStr = '`col1` int(11) unsigned DEFAULT';
         MySQL::parseColumn($colDefStr, 'testTable');
     }
 

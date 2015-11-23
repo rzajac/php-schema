@@ -17,8 +17,6 @@
 
 namespace Kicaj\SchemaDump;
 
-use Kicaj\Tools\Db\DbConnector;
-
 /**
  * Database column definition.
  *
@@ -328,7 +326,27 @@ class ColumnDefinition
      */
     public function setDefaultValue($defaultValue)
     {
-        $this->defaultValue = $defaultValue;
+        if ($defaultValue === null) {
+            $this->defaultValue = $defaultValue;
+            return $this;
+        }
+
+        switch ($this->getPhpType()) {
+            case SchemaDump::PHP_TYPE_INT:
+                $this->defaultValue = (int) $defaultValue;
+                break;
+
+            case SchemaDump::PHP_TYPE_FLOAT:
+                $this->defaultValue = (float) $defaultValue;
+                break;
+
+            case SchemaDump::PHP_TYPE_BOOL:
+                $this->defaultValue = (bool) $defaultValue;
+                break;
+
+            default:
+                $this->defaultValue = $defaultValue;
+        }
 
         return $this;
     }

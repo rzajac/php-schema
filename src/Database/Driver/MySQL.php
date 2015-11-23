@@ -371,10 +371,10 @@ class MySQL implements SchemaGetter
 
         $colDef = ColumnDefinition::make($colName, $tableName);
 
-        // Figure out the extra parameters first so we can access to undefined not null and so on
-        static::setColDefExtra($colDef, $colExtra);
         // Set MySQL and PHP types for the column
         static::mySQLToPhpType($colDef, $colType);
+        // Figure out the extra parameters first so we can access to undefined not null and so on
+        static::setColDefExtra($colDef, $colExtra);
 
         if (in_array($colDef->getDbType(), [self::TYPE_ENUM, self::TYPE_SET])) {
             $colType = $colType.' '.$colExtra;
@@ -410,8 +410,9 @@ class MySQL implements SchemaGetter
             $colDef->setIsAutoincrement();
         }
 
-        if (strpos($colDefExtra, 'DEFAULT ') !== false) {
-            preg_match('/DEFAULT (.*)[ ,]/', $colDefExtra, $matches);
+        if (strpos($colDefExtra, 'DEFAULT') !== false) {
+            $colDefExtra = trim($colDefExtra, ',');
+            preg_match('/DEFAULT (.*)[ ,]?/', $colDefExtra, $matches);
             if (count($matches) != 2) {
                 throw new SchemaException('could not decipher DEFAULT: ' . $colDefExtra);
             }
