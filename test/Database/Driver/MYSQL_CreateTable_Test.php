@@ -14,9 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 namespace Database\Driver;
-
 
 use Kicaj\SchemaDump\Database\SchemaDumpFactory;
 use Kicaj\SchemaDump\SchemaGetter;
@@ -29,7 +27,7 @@ use Kicaj\Test\SchemaDump\BaseTest;
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class MYSQL_CreateTable_Test extends BaseTest
+class MySQL_CreateTable_Test extends BaseTest
 {
     protected static $residentFixtures = ['bigtable_create.sql'];
 
@@ -42,9 +40,9 @@ class MYSQL_CreateTable_Test extends BaseTest
     {
         parent::setUp();
 
-        $this->schema = SchemaDumpFactory::factory(self::dbGetConfig());
+        $dbConfig = self::getDefaultConfig();
+        $this->schema = SchemaDumpFactory::factory($dbConfig);
     }
-
 
     /**
      * @covers ::dbGetTableDefinition
@@ -111,22 +109,22 @@ class MYSQL_CreateTable_Test extends BaseTest
             0 => [
                     0 => 'u',
                     1 => 'UNIQUE',
-                    2 => [0 => 'chr',],
+                    2 => [0 => 'chr'],
             ],
             1 => [
                     0 => 'vchr',
                     1 => 'UNIQUE',
-                    2 => [0 => 'vchr',],
+                    2 => [0 => 'vchr'],
                 ],
             2 => [
                     0 => 'tint',
                     1 => 'KEY',
-                    2 => [0 => 'tint',],
+                    2 => [0 => 'tint'],
             ],
             3 => [
                     0 => 'b',
                     1 => 'KEY',
-                    2 => [0 => 'sint',],
+                    2 => [0 => 'sint'],
             ],
         ];
 
