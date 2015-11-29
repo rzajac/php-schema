@@ -44,7 +44,7 @@ class MySQL_Test extends BaseTest
         parent::setUp();
 
         $this->driver = new MySQL();
-        $this->driver->dbSetup(self::dbGetConfig())->dbConnect();
+        $this->driver->dbSetup(self::getDefaultConfig()['connection'])->dbConnect();
     }
 
     /**
@@ -74,7 +74,7 @@ class MySQL_Test extends BaseTest
             'port' => $port,
         ];
 
-        $myMySQL   = new MySQL;
+        $myMySQL = new MySQL();
         $connected = $myMySQL->dbSetup($dbConfig)->dbConnect();
 
         $this->assertSame($connect, $connected);
@@ -118,8 +118,8 @@ class MySQL_Test extends BaseTest
         $expCreate = self::loadFileFixture('bigtable_create.sql');
         $gotCreate = $this->driver->dbGetCreateStatement('bigtable');
 
-        $this->assertSame(1, count($expCreate));
-        $expCreate = $expCreate[0];
+        $this->assertSame(2, count($expCreate));
+        $expCreate = $expCreate[1]; // Get create statement only
 
         $this->assertFalse($this->driver->hasError());
         $this->assertSame(4, count(array_keys($gotCreate)));

@@ -18,13 +18,13 @@ class SchemaExport_Test extends BaseTest
     /**
      * @var SchemaDump
      */
-    protected $se;
+    protected $schemaDump;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->se = SchemaDump::make(self::dbGetConfig());
+        $this->schemaDump = SchemaDump::make(self::getDefaultConfig());
     }
 
     /**
@@ -34,7 +34,7 @@ class SchemaExport_Test extends BaseTest
     public function test___construct()
     {
         SchemaDumpFactory::_resetInstances();
-        $se = SchemaDump::make(self::dbGetConfig());
+        $se = SchemaDump::make(self::getDefaultConfig());
         $this->assertFalse($se->hasError());
     }
 
@@ -44,8 +44,8 @@ class SchemaExport_Test extends BaseTest
     public function test___construct_error()
     {
         SchemaDumpFactory::_resetInstances();
-        $dbConfig = self::dbGetConfig();
-        $dbConfig['password'] = 'wrongOne';
+        $dbConfig = self::getDefaultConfig();
+        $dbConfig['connection']['password'] = 'wrongOne';
 
         $se = SchemaDump::make($dbConfig);
         $this->assertTrue($se->hasError());
@@ -61,7 +61,7 @@ class SchemaExport_Test extends BaseTest
      */
     public function test_isValidFormat($format, $expected)
     {
-        $this->assertSame($expected, $this->se->isValidFormat($format));
+        $this->assertSame($expected, $this->schemaDump->isValidFormat($format));
     }
 
     public function isValidFormatProvider()
@@ -83,8 +83,8 @@ class SchemaExport_Test extends BaseTest
         self::dbDropAllTables();
         self::dbLoadFixture('test1.sql');
 
-        $gotDef = $this->se->getCreateStatements();
-        $got = $this->se->getCreateStatements(SchemaDump::FORMAT_PHP_ARRAY);
+        $gotDef = $this->schemaDump->getCreateStatements();
+        $got = $this->schemaDump->getCreateStatements(SchemaDump::FORMAT_PHP_ARRAY);
 
         $this->assertSame($gotDef, $got);
         $this->assertSame(1, count(array_keys($got)));
@@ -93,15 +93,16 @@ class SchemaExport_Test extends BaseTest
 
     /**
      * @covers ::getCreateStatements
-     * @covers ::addIfNotExists
      */
     public function test_getCreateStatements_phpFile()
     {
         self::dbDropAllTables();
         self::dbLoadFixture('test1.sql');
 
-        $this->se->addIfNotExists();
-        $got = $this->se->getCreateStatements(SchemaDump::FORMAT_PHP_FILE);
+        $dbConfig = self::getDefaultConfig();
+        $dbConfig['add_if_not_exists'] = true;
+
+        $got = SchemaDump::make($dbConfig)->getCreateStatements(SchemaDump::FORMAT_PHP_FILE);
 
         $this->assertSame(self::loadFileFixture('test1.txt'), $got);
     }
@@ -114,7 +115,7 @@ class SchemaExport_Test extends BaseTest
         self::dbDropAllTables();
         self::dbLoadFixture('test1.sql');
 
-        $got = $this->se->getCreateStatements(SchemaDump::FORMAT_SQL);
+        $got = $this->schemaDump->getCreateStatements(SchemaDump::FORMAT_SQL);
         $got = Str::oneLine($got);
         $expected = self::loadFileFixture('test1.sql')[0];
 
@@ -129,7 +130,6 @@ class SchemaExport_Test extends BaseTest
      */
     public function test_getCreateStatements_unknown()
     {
-        $this->se->getCreateStatements('unknown');
+        $this->schemaDump->getCreateStatements('unknown');
     }
-
 }

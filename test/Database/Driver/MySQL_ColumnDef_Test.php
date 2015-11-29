@@ -14,7 +14,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 namespace Kicaj\Test\SchemaDump\Database\Driver;
 
 use Kicaj\SchemaDump\ColumnDefinition;
@@ -1190,5 +1189,4 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
 
         MySQL::mySQLToPhpType($colDef, 'bad column definition');
     }
-
 }

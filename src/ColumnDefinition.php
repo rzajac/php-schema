@@ -14,7 +14,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 namespace Kicaj\SchemaDump;
 
 /**
@@ -143,7 +142,7 @@ class ColumnDefinition
      * @param string $columnName The column name
      * @param string $driverName The driver name that is setting up ColumnDefinition.
      *                           The one of DbConnector::DB_DRIVER_* constants.
-     * @param string $tableName The table name column belongs to
+     * @param string $tableName  The table name column belongs to
      */
     public function __construct($columnName, $driverName, $tableName)
     {
@@ -194,7 +193,7 @@ class ColumnDefinition
     /**
      * Is column set as unsigned.
      *
-     * @return boolean
+     * @return bool
      */
     public function isUnsigned()
     {
@@ -204,7 +203,7 @@ class ColumnDefinition
     /**
      * Set column as signed or unsigned.
      *
-     * @param boolean $isUnsigned
+     * @param bool $isUnsigned
      *
      * @return ColumnDefinition
      */
@@ -218,7 +217,7 @@ class ColumnDefinition
     /**
      * Is null value allowed for the column.
      *
-     * @return boolean
+     * @return bool
      */
     public function isNotNull()
     {
@@ -228,7 +227,7 @@ class ColumnDefinition
     /**
      * Set if null is allowed for the column.
      *
-     * @param boolean $notNull
+     * @param bool $notNull
      *
      * @return ColumnDefinition
      */
@@ -242,7 +241,7 @@ class ColumnDefinition
     /**
      * Is column set as autoincrement.
      *
-     * @return boolean
+     * @return bool
      */
     public function isAutoincrement()
     {
@@ -252,7 +251,7 @@ class ColumnDefinition
     /**
      * Set column as autoincrement or not.
      *
-     * @param boolean $isAutoincrement
+     * @param bool $isAutoincrement
      *
      * @return ColumnDefinition
      */
@@ -266,7 +265,7 @@ class ColumnDefinition
     /**
      * Is column part of primary key for the table.
      *
-     * @return boolean
+     * @return bool
      */
     public function isPartOfPk()
     {
@@ -276,7 +275,7 @@ class ColumnDefinition
     /**
      * Set column as being part of primary key for the table.
      *
-     * @param boolean $isPartOfPk
+     * @param bool $isPartOfPk
      *
      * @return ColumnDefinition
      */
@@ -328,6 +327,7 @@ class ColumnDefinition
     {
         if ($defaultValue === null) {
             $this->defaultValue = $defaultValue;
+
             return $this;
         }
 
@@ -512,6 +512,4 @@ class ColumnDefinition
 
         return $this;
     }
-
-
 }

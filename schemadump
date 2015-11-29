@@ -18,6 +18,9 @@
  */
 
 // Require composer autoload file
+use Kicaj\SchemaDump\DumpCommand;
+use Symfony\Component\Console\Application;
+
 foreach (
     [
         __DIR__ . '/../../autoload.php',
@@ -26,38 +29,17 @@ foreach (
     ] as $file) {
     if (file_exists($file)) {
         /** @noinspection PhpIncludeInspection */
-        require $file;
+        $classLoader = require $file;
         break;
     }
 }
 
-use Kicaj\SchemaDump\Cli;
-use Kicaj\SchemaDump\SchemaDump;
+/** @var Composer\Autoload\ClassLoader $classLoader */
 
-$cliOptions = getopt(Cli::getCliShortOptions(), Cli::getCliLongOptions());
+$dumpCmd = new DumpCommand();
 
-$cli = Cli::make();
-
-if (!$cli->setOptions($cliOptions)) {
-    echo $cli->getError()->getMessage();
-    exit(1);
-}
-
-$exporter = SchemaDump::make($cli->getDbConfig())
-                      ->addIfNotExists($cli->isAddIfNotExists());
-
-if ($exporter->hasError()) {
-    echo $exporter->getError()->getMessage() . "\n";
-    exit(1);
-}
-
-$content = $exporter->getCreateStatements($cli->getFormat());
-$outputFile = $cli->getOutputFile();
-
-if ($outputFile) {
-    file_put_contents($outputFile, $content);
-    echo "schema for exported\n";
-} else {
-    echo $content;
-}
-
+$application = new Application();
+$application->setName('Database schema dumper');
+$application->setVersion('0.1.0');
+$application->add($dumpCmd);
+$application->run();

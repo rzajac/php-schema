@@ -1,4 +1,5 @@
 coverage
 .idea
 vendor
-db_config.php
+tmp
+db_config.json

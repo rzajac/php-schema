@@ -59,16 +59,16 @@ final class SchemaDumpFactory
             return self::$instances[$key];
         }
 
-        switch (DbConnect::getDriver($dbConfig)) {
+        switch (DbConnect::getDriver($dbConfig['connection'])) {
             case DbConnector::DB_DRIVER_MYSQL:
                 self::$instances[$key] = new MySQL();
                 break;
 
             default:
-                throw new SchemaException('unknown database driver name: '.$dbConfig['driver']);
+                throw new SchemaException('unknown database driver name: '.$dbConfig['connection']['driver']);
         }
 
-        self::$instances[$key]->dbSetup($dbConfig);
+        self::$instances[$key]->dbSetup($dbConfig['connection']);
 
         if ($connect && !self::$instances[$key]->dbConnect()) {
             throw new SchemaException('database connection failed: '.self::$instances[$key]->getError()->getMessage());
@@ -81,7 +81,7 @@ final class SchemaDumpFactory
     /**
      * Reset instances cache.
      *
-     * This is used only during unit tests.
+     * This is used only during unit tests.1391j8ri9X?o
      */
     public static function _resetInstances()
     {

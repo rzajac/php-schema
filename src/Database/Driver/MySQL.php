@@ -17,12 +17,12 @@
  */
 namespace Kicaj\SchemaDump\Database\Driver;
 
-use Exception;
 use Kicaj\SchemaDump\ColumnDefinition;
 use Kicaj\SchemaDump\SchemaDump;
 use Kicaj\SchemaDump\SchemaException;
 use Kicaj\SchemaDump\SchemaGetter;
 use Kicaj\SchemaDump\TableDefinition;
+use Kicaj\Tools\Db\DbConnector;
 use Kicaj\Tools\Traits\Error;
 use mysqli;
 
@@ -134,12 +134,12 @@ class MySQL implements SchemaGetter
     public function dbConnect()
     {
         // Database connection config
-        $host = $this->dbConfig['host'];
-        $port = $this->dbConfig['port'];
-        $user = $this->dbConfig['username'];
-        $pass = $this->dbConfig['password'];
+        $host = $this->dbConfig[DbConnector::DB_CFG_HOST];
+        $port = $this->dbConfig[DbConnector::DB_CFG_PORT];
+        $user = $this->dbConfig[DbConnector::DB_CFG_USERNAME];
+        $pass = $this->dbConfig[DbConnector::DB_CFG_PASSWORD];
 
-        $this->dbName = $this->dbConfig['database'];
+        $this->dbName = $this->dbConfig[DbConnector::DB_CFG_DATABASE];
 
         mysqli_report(MYSQLI_REPORT_STRICT);
 
@@ -301,15 +301,15 @@ class MySQL implements SchemaGetter
             if (strpos($line, '`') === 0) {
                 $colDef = $this->parseColumn($line, $tableName);
                 $tableDef->addColumn($colDef);
-            } else if (strpos($line, 'PRIMARY KEY') === 0) {
+            } elseif (strpos($line, 'PRIMARY KEY') === 0) {
                 $index = self::parseIndex($line);
                 $index[1] = self::INDEX_PRIMARY;
                 $tableDef->addIndex($index);
-            } else if (strpos($line, 'UNIQUE KEY') === 0) {
+            } elseif (strpos($line, 'UNIQUE KEY') === 0) {
                 $index = self::parseIndex($line);
                 $index[1] = self::INDEX_UNIQUE;
                 $tableDef->addIndex($index);
-            } else if (strpos($line, 'KEY') === 0) {
+            } elseif (strpos($line, 'KEY') === 0) {
                 $index = self::parseIndex($line);
                 $index[1] = self::INDEX_KEY;
                 $tableDef->addIndex($index);
@@ -325,6 +325,7 @@ class MySQL implements SchemaGetter
      * @param string $keyDef
      *
      * @return array
+     *
      * @throws SchemaException
      */
     public static function parseIndex($keyDef)
@@ -414,7 +415,7 @@ class MySQL implements SchemaGetter
             $colDefExtra = trim($colDefExtra, ',');
             preg_match('/DEFAULT (.*)[ ,]?/', $colDefExtra, $matches);
             if (count($matches) != 2) {
-                throw new SchemaException('could not decipher DEFAULT: ' . $colDefExtra);
+                throw new SchemaException('could not decipher DEFAULT: '.$colDefExtra);
             }
             $defaultValue = trim($matches[1]);
             $defaultValue = trim($defaultValue, '\'');
@@ -463,6 +464,7 @@ class MySQL implements SchemaGetter
                 $value = trim($value, '\'');
             }
             $colDef->setValidValues($matches);
+
             return;
         }
 
@@ -473,7 +475,7 @@ class MySQL implements SchemaGetter
 
             $lengthDef = $matches[1];
             $left = $lengthDef;
-            $colDef->setMinLength(0)->setMaxLength((int)$left);
+            $colDef->setMinLength(0)->setMaxLength((int) $left);
         }
     }
 
@@ -493,6 +495,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_INT)
                 ->setDbType(self::TYPE_TINYINT);
+
             return;
         }
 
@@ -500,6 +503,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_INT)
                 ->setDbType(self::TYPE_MEDIUMINT);
+
             return;
         }
 
@@ -507,6 +511,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_INT)
                 ->setDbType(self::TYPE_SMALLINT);
+
             return;
         }
 
@@ -514,6 +519,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_INT)
                 ->setDbType(self::TYPE_BIGINT);
+
             return;
         }
 
@@ -521,6 +527,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_INT)
                 ->setDbType(self::TYPE_INT);
+
             return;
         }
 
@@ -528,6 +535,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_INT)
                 ->setDbType(self::TYPE_DECIMAL);
+
             return;
         }
 
@@ -537,6 +545,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_BINARY)
                 ->setDbType(self::TYPE_BIT);
+
             return;
         }
 
@@ -544,6 +553,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_BINARY)
                 ->setDbType(self::TYPE_BINARY);
+
             return;
         }
 
@@ -551,6 +561,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_BINARY)
                 ->setDbType(self::TYPE_VARBINARY);
+
             return;
         }
 
@@ -560,6 +571,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_VARCHAR);
+
             return;
         }
 
@@ -567,6 +579,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_CHAR);
+
             return;
         }
 
@@ -574,6 +587,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_TEXT);
+
             return;
         }
 
@@ -581,6 +595,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_TINYTEXT);
+
             return;
         }
 
@@ -588,6 +603,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_LONGTEXT);
+
             return;
         }
 
@@ -595,6 +611,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_MEDIUMTEXT);
+
             return;
         }
 
@@ -604,6 +621,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_TIMESTAMP)
                 ->setDbType(self::TYPE_TIMESTAMP);
+
             return;
         }
 
@@ -611,6 +629,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_TIME)
                 ->setDbType(self::TYPE_TIME);
+
             return;
         }
 
@@ -618,6 +637,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_DATETIME)
                 ->setDbType(self::TYPE_DATETIME);
+
             return;
         }
 
@@ -625,6 +645,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_DATE)
                 ->setDbType(self::TYPE_DATE);
+
             return;
         }
 
@@ -632,6 +653,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_YEAR)
                 ->setDbType(self::TYPE_YEAR);
+
             return;
         }
 
@@ -641,6 +663,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_MEDIUMBLOB);
+
             return;
         }
 
@@ -648,6 +671,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_TINYBLOB);
+
             return;
         }
 
@@ -655,6 +679,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_LONGBLOB);
+
             return;
         }
 
@@ -662,6 +687,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_BLOB);
+
             return;
         }
 
@@ -671,6 +697,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_FLOAT)
                 ->setDbType(self::TYPE_FLOAT);
+
             return;
         }
 
@@ -678,6 +705,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_FLOAT)
                 ->setDbType(self::TYPE_DOUBLE);
+
             return;
         }
 
@@ -687,6 +715,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_ENUM);
+
             return;
         }
 
@@ -694,6 +723,7 @@ class MySQL implements SchemaGetter
             $colDef
                 ->setPhpType(SchemaDump::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_SET);
+
             return;
         }
 
@@ -871,5 +901,3 @@ class MySQL implements SchemaGetter
         return $rows;
     }
 }
-
-// `s` set('o','t') NOT NULL,

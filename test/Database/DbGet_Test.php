@@ -42,8 +42,8 @@ class DbGet_Test extends BaseTest
      */
     public function test_factory($driverName, $expMsg)
     {
-        $dbConfig = self::dbGetConfig();
-        $dbConfig['driver'] = $driverName;
+        $dbConfig = self::getDefaultConfig();
+        $dbConfig['connection']['driver'] = $driverName;
 
         try {
             $mysql = SchemaDumpFactory::factory($dbConfig);
@@ -75,8 +75,8 @@ class DbGet_Test extends BaseTest
      */
     public function test_factoryConnErr()
     {
-        $dbConfig = self::dbGetConfig();
-        $dbConfig['password'] = 'wrongOne';
+        $dbConfig = self::getDefaultConfig();
+        $dbConfig['connection']['password'] = 'wrongOne';
 
         try {
             SchemaDumpFactory::factory($dbConfig, true);
@@ -96,8 +96,10 @@ class DbGet_Test extends BaseTest
      */
     public function test_factory_sameInstance()
     {
-        $db1 = SchemaDumpFactory::factory(self::dbGetConfig());
-        $db2 = SchemaDumpFactory::factory(self::dbGetConfig());
+        $dbConfig = self::getDefaultConfig();
+
+        $db1 = SchemaDumpFactory::factory($dbConfig);
+        $db2 = SchemaDumpFactory::factory($dbConfig);
 
         $this->assertSame($db1, $db2);
     }

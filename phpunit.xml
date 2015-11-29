@@ -3,8 +3,8 @@
     <php>
         <var name="DB_HOST" value="127.0.0.1"/>
         <var name="DB_PORT" value="3306"/>
-        <var name="DB_USERNAME" value="unitTest"/>
-        <var name="DB_PASSWORD" value="unitTestPass"/>
+        <var name="DB_USERNAME" value="testUser"/>
+        <var name="DB_PASSWORD" value="testUserPass"/>
         <var name="DB_DATABASE" value="test"/>
         <var name="DB_DRIVER" value="mysql"/>
 

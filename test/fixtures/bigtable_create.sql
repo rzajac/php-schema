@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS  `bigtable`;
 CREATE TABLE `bigtable` (
 	`id` int(11) unsigned NOT NULL AUTO_INCREMENT,
 	`bt_id` int(10) unsigned NOT NULL,

@@ -1,0 +1,14 @@
+{
+  "connection": {
+    "username": "testUser",
+    "password": "testUserPass",
+    "host": "localhost",
+    "port": "3306",
+    "database": "test"
+  },
+  "driver": "mysql",
+  "export_type": "phpArray",
+  "drop_before_create": true,
+  "add_if_not_exists": true,
+  "output_file": "tmp/schema.php"
+}

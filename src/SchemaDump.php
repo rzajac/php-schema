@@ -68,18 +68,18 @@ class SchemaDump
     const COLUMN_AUTOINCREMENT = 'autoincrement';
 
     /**
+     * Schema dump configuration.
+     *
+     * @var array
+     */
+    protected $config;
+
+    /**
      * Database driver.
      *
      * @var SchemaGetter
      */
     private $dbDrv;
-
-    /**
-     * Add IF NOT EXIST to CREATE statements.
-     *
-     * @var bool
-     */
-    private $addIfNotExists = false;
 
     /**
      * Constructor.
@@ -88,6 +88,8 @@ class SchemaDump
      */
     public function __construct(array $dbConfig)
     {
+        $this->config = $dbConfig;
+
         try {
             $this->dbDrv = SchemaDumpFactory::factory($dbConfig, true);
         } catch (\Exception $e) {
@@ -105,20 +107,6 @@ class SchemaDump
     public static function make(array $dbConfig)
     {
         return new static($dbConfig);
-    }
-
-    /**
-     * Set addIfNotExists property.
-     *
-     * @param bool $flag Set to true to add 'IF NOT EXIST'
-     *
-     * @return SchemaDump
-     */
-    public function addIfNotExists($flag = true)
-    {
-        $this->addIfNotExists = $flag;
-
-        return $this;
     }
 
     /**
@@ -146,17 +134,22 @@ class SchemaDump
      *   - type   - table, view ( one of the self::CREATE_TYPE_* )
      *   - name   - table name
      *
-     * @return array|string
-     *
      * @throws SchemaException
+     *
+     * @return array|string
      */
-    public function getCreateStatements($format = self::FORMAT_PHP_ARRAY)
+    public function getCreateStatements($format = null)
     {
-        $createStatements = $this->dbDrv->dbGetCreateStatements($this->addIfNotExists);
+        $exportType = $this->config['export_type'];
+        if ($format != null) {
+            $exportType = $format;
+        }
+
+        $createStatements = $this->dbDrv->dbGetCreateStatements($this->config['add_if_not_exists']);
 
         $ret = null;
 
-        switch ($format) {
+        switch ($exportType) {
 
             case self::FORMAT_PHP_ARRAY:
                 $ret = $createStatements;
@@ -173,7 +166,7 @@ class SchemaDump
                 break;
 
             default:
-                throw new SchemaException('unknown format: '.$format);
+                throw new SchemaException('unknown format: '.$exportType);
         }
 
         return $ret;

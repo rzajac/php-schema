@@ -17,6 +17,7 @@
  */
 namespace Kicaj\Test\SchemaDump;
 
+use Kicaj\SchemaDump\SchemaDump;
 use Kicaj\Test\Helper\TestCase\DbTestCase;
 
 /**
@@ -31,5 +32,16 @@ abstract class BaseTest extends DbTestCase
         self::setupDb();
         self::dbDropAllTables();
         parent::setUpBeforeClass();
+    }
+
+    public static function getDefaultConfig()
+    {
+        return [
+            'connection' => self::dbGetConfig(),
+            'export_type' => SchemaDump::FORMAT_PHP_ARRAY,
+            'drop_before_create' => false,
+            'add_if_not_exists' => false,
+            'output_file' => 'tmp/schema.php',
+        ];
     }
 }
