@@ -8,7 +8,6 @@
   },
   "driver": "mysql",
   "export_type": "phpArray",
-  "drop_before_create": true,
   "add_if_not_exists": true,
   "output_file": "tmp/schema.php"
 }

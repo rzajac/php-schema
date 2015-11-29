@@ -39,7 +39,6 @@ abstract class BaseTest extends DbTestCase
         return [
             'connection' => self::dbGetConfig(),
             'export_type' => SchemaDump::FORMAT_PHP_ARRAY,
-            'drop_before_create' => false,
             'add_if_not_exists' => false,
             'output_file' => 'tmp/schema.php',
         ];

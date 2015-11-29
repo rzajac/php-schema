@@ -1,4 +1,4 @@
-## Database schema exporter
+## Database schema dumper
 
 This command line and library helps dumping database schemas to a file.
 
@@ -10,11 +10,15 @@ At the moment only MySQL is supported.
 
 There are two export modes:
 
-- as PHP array - creates includable PHP file with $createStatments
-associative array where keys are table names and values are SQL CREATE statements.
-- as SQL statements - creates file with CREATE statements for all tables in given database.
+- **phpFile** - creates includable PHP file with $createStatements associative array where keys are table names and values are SQL CREATE statements.
+- **sql** - creates file with CREATE statements for all tables in given database.
 
-This tool not only exports CREATE statements but rewrites it in following way:
+When used as a library there is additional export type:
+
+- **phpArray** - returns PHP array with create statements to the caller.
+
+This tool also rewrites create statements it in following way:
+
 - resets AUTO_INCREMENT to 1
 - adds CREATE TABLE IF NOT EXISTS (configurable)
 - adds DROP TABLE IF EXISTS (configurable)
@@ -27,7 +31,7 @@ Composer install:
 ```json
 {
     "require": {
-        "rzajac/schemadump": "0.4.*"
+        "rzajac/schemadump": "0.5.*"
     }
 }
 ```
@@ -35,7 +39,7 @@ Composer install:
 Composer globally:
 
 ```
-$ ./composer.phar global require rzajac/schemadump
+$ composer global require rzajac/schemadump
 ```
 
 ## How to use
@@ -43,66 +47,69 @@ $ ./composer.phar global require rzajac/schemadump
 Run:
 
 ```
-$ schemadump --help
-
-Usage: schemadump [options]
-
-Dump MySQL table create statements for all tables in selected database.
+$ ./schemadump dump -h
+Usage:
+  dump [options]
 
 Options:
- -h                                : Database host name or IP
- -u                                : Database user name
- -p                                : Database port
- -d                                : Database name
- -c                                : Path to config file. If passed all other options are ignored
- -o                                : Output file
- --sql                             : dump file will contain only SQL statements.
-                                     By default this tool will dump create statements to
-                                     PHP associative array.
+  -c, --config[=CONFIG]  The path to configuration JSON file. If not set it will search for db_config.json in current directory
+  -h, --help             Display this help message
+  -q, --quiet            Do not output any message
+  -V, --version          Display this application version
+      --ansi             Force ANSI output
+      --no-ansi          Disable ANSI output
+  -n, --no-interaction   Do not ask any interactive question
+  -v|vv|vvv, --verbose   Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
 
- --drop-before-create=[true|false] : Add DROP TABLE SQL before each CREATE TABLE statement
- --add-if-not-exists=[true|false]  : Add CREATE IF NOT EXISTS to all CREATE TABLE statements
- --help                            : This help message
-
-Example config file:
-
-    $config = array
-    (
-        'connection'    => array
-        (
-            'user'     => 'dbusername',
-            'pass'     => 'dbpassword',
-            'host'     => '127.0.0.1',
-            'port'     => '3306',
-            'database' => 'my_database_name'
-        ),
-        'export_type' => 'phparray',
-        'drop_before_create' => TRUE,
-        'add_if_not_exists' => TRUE,
-        'output_file' => '/tmp/schema.sql'
-    );
-
-    return $config;
+Help:
+ Dump database schema
 ```
+
+## Configuration file
+
+```json
+{
+  "connection": {
+    "username": "testUser",
+    "password": "testUserPass",
+    "host": "localhost",
+    "port": "3306",
+    "database": "test",
+    "driver": "mysql"
+  },
+  "export_type": "phpArray",
+  "add_if_not_exists": true,
+  "output_file": "tmp/schema.php"
+}
+```
+
+- **export_type** - export create statements as: _phpFile_, _phpArray_, _sql_.
+- **add_if_not_exists** - add IF NOT EXISTS to SQL create statements. 
+
+Database `connection` spec can be found [here](https://github.com/rzajac/phptools/blob/master/src/Db/DbConnect.php#L38)
 
 ## schemadump API
  
 ```php
+// Config in the same format as above
 $schemaDump = SchemaDumpFactory::make($dbConfig);
+ 
+// Get create statements
 $tableCreateStatement = $schemaDump->dbGetCreateStatement('tableName');
-$tableDefinition = $schemaDump->dbGetTableDefinition('tableName');
+ 
+// Get see TableDefinition class
+$tableDefinition = $schemaDump->dbGetTableDefinition('tableName'); 
 ```
 
-Configuration array spec can be found [here](https://github.com/rzajac/phptools/blob/master/src/Db/DbConnect.php#L38)
+See [TableDefinition](src/TableDefinition.php) class.
+
 
 ## Where this script can be used
 
 You could use it in unit tests. The tool exports the CREATE statements as includable PHP file. 
-The file contains an associative array where keys are table names and values are CREATE statements.
+The file contains an associative array where keys are database table names and values are CREATE statements.
 See [http://someguyjeremy.com/blog/database-testing-with-phpunit](http://someguyjeremy.com/blog/database-testing-with-phpunit) 
 where Jeremy Harris shows how you can load fixtures just for specific tables in your tests.
-Using this tool you could add creating and doping tables from your database. 
-Especially when your production / staging database schema changes frequently.
 
 ## Also see
 
@@ -112,4 +119,3 @@ look at my schema sync project [https://github.com/rzajac/dbupdate](https://gith
 ## License
 
 Released under the Apache License 2.0.
-

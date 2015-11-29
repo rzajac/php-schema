@@ -59,7 +59,6 @@ class DumpCommand extends Command
             ],
             DbConnector::DB_CFG_DRIVER => DbConnector::DB_DRIVER_MYSQL,
             'export_type' => SchemaDump::FORMAT_PHP_ARRAY,
-            'drop_before_create' => true,
             'add_if_not_exists' => true,
             'output_file' => 'tmp/schema.php',
         ];
