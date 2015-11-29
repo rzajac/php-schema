@@ -103,6 +103,7 @@ $tableDefinition = $schemaDump->dbGetTableDefinition('tableName');
 
 See [TableDefinition](src/TableDefinition.php) class.
 
+Class documentation can be found [here](docs/index.md).
 
 ## Where this script can be used
 
