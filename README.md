@@ -31,7 +31,7 @@ Composer install:
 ```json
 {
     "require": {
-        "rzajac/schemadump": "0.5.*"
+        "rzajac/schemadump": "0.6.*"
     }
 }
 ```

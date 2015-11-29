@@ -40,6 +40,6 @@ $dumpCmd = new DumpCommand();
 
 $application = new Application();
 $application->setName('Database schema dumper');
-$application->setVersion('0.5.0');
+$application->setVersion('0.6.0');
 $application->add($dumpCmd);
 $application->run();

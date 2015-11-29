@@ -182,7 +182,11 @@ class MySQL implements SchemaGetter
 
         $ret = [];
         foreach ($tableNames as $tableName) {
-            $ret[] = $tableName['Tables_in_'.$this->dbName];
+            if (isset($tableName['Tables_in_'.$this->dbName])) {
+                $ret[] = $tableName['Tables_in_'.$this->dbName];
+            } else {
+                $ret[] = $tableName['Tables_in_'.strtolower($this->dbName)];
+            }
         }
 
         return $ret;
