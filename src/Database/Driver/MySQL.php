@@ -177,8 +177,8 @@ class MySQL implements SchemaGetter
      */
     public function dbGetTableNames()
     {
-        $resp = $this->mysqli->query('SHOW TABLES');
-        $tableNames = $this->getRowsArray($resp);
+        $result = $this->mysqli->query('SHOW TABLES');
+        $tableNames = $this->getRowsArray($result);
 
         $ret = [];
         foreach ($tableNames as $tableName) {
@@ -208,8 +208,8 @@ class MySQL implements SchemaGetter
      */
     public function dbGetCreateStatement($tableName, $addIfNotExists = false)
     {
-        $resp = $this->mysqli->query('SHOW CREATE TABLE '.$tableName);
-        $createStatementResp = $this->getRowsArray($resp);
+        $result = $this->mysqli->query('SHOW CREATE TABLE '.$tableName);
+        $createStatementResp = $this->getRowsArray($result);
 
         $createStatement = array_pop($createStatementResp);
 
@@ -457,7 +457,7 @@ class MySQL implements SchemaGetter
             case self::TYPE_DECIMAL:
             case self::TYPE_YEAR:
                 return;
-            break;
+                break;
         }
 
         preg_match('/.*\((.*)\).*/', $typeDef, $matches);
@@ -825,17 +825,17 @@ class MySQL implements SchemaGetter
 
             case self::TYPE_DATE:
                 $colDef->setMinValue('1000-01-01')
-                    ->setMaxValue('9999-12-31');
+                       ->setMaxValue('9999-12-31');
                 break;
 
             case self::TYPE_DATETIME:
                 $colDef->setMinValue('1000-01-01 00:00:00')
-                    ->setMaxValue('9999-12-31 23:59:59');
+                       ->setMaxValue('9999-12-31 23:59:59');
                 break;
 
             case self::TYPE_YEAR:
                 $colDef->setMinValue(1901)
-                    ->setMaxValue(2155);
+                       ->setMaxValue(2155);
                 break;
 
             case self::TYPE_CHAR:
@@ -886,22 +886,23 @@ class MySQL implements SchemaGetter
     /**
      * Get all rows from the DB result.
      *
-     * @param \mysqli_result $res The database query response
+     * @param \mysqli_result $result The database query response
      *
      * @return array The array of SQL rows
      */
-    private function getRowsArray($res)
+    private function getRowsArray($result)
     {
-        if (!$res) {
+        if (!$result) {
             return [];
         }
 
         $rows = [];
 
-        while ($row = $res->fetch_assoc()) {
+        while ($row = $result->fetch_assoc()) {
             $rows[] = $row;
         }
 
+        $result->free();
         return $rows;
     }
 }
