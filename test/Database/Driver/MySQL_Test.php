@@ -19,6 +19,8 @@ namespace Kicaj\Test\SchemaDump\Database\Driver;
 
 use Kicaj\SchemaDump\Database\Driver\MySQL;
 use Kicaj\Test\SchemaDump\BaseTest;
+use Kicaj\Tools\Db\DatabaseException;
+use Kicaj\Tools\Db\DbConnector;
 use Kicaj\Tools\Helper\Str;
 
 /**
@@ -30,8 +32,6 @@ use Kicaj\Tools\Helper\Str;
  */
 class MySQL_Test extends BaseTest
 {
-    protected static $residentFixtures = ['bigtable_create.sql'];
-
     /**
      * Database driver we are testing.
      *
@@ -41,10 +41,8 @@ class MySQL_Test extends BaseTest
 
     public function setUp()
     {
-        parent::setUp();
-
         $this->driver = new MySQL();
-        $this->driver->dbSetup(self::getDefaultConfig()['connection'])->dbConnect();
+        $this->driver->dbSetup(self::dbGetConfig('SCHEMA_DUMP1'))->dbConnect();
     }
 
     /**
@@ -67,43 +65,63 @@ class MySQL_Test extends BaseTest
 
         // Database config
         $dbConfig = [
-            'host' => $host,
-            'username' => $username,
-            'password' => $password,
-            'database' => $database,
-            'port' => $port,
+            DbConnector::DB_CFG_HOST     => $host,
+            DbConnector::DB_CFG_USERNAME => $username,
+            DbConnector::DB_CFG_PASSWORD => $password,
+            DbConnector::DB_CFG_DATABASE => $database,
+            DbConnector::DB_CFG_PORT     => $port,
         ];
 
         $myMySQL = new MySQL();
-        $connected = $myMySQL->dbSetup($dbConfig)->dbConnect();
 
-        $this->assertSame($connect, $connected);
+        try {
+            $thrown = false;
+            $myMySQL->dbSetup($dbConfig)->dbConnect();
+            $myMySQL->dbGetTableNames(); // Call method that is actually doing something with database.
+        } catch (DatabaseException $e) {
+            $thrown = true;
 
-        $error = $gotMsg = $myMySQL->getError();
-
-        if ($connect) {
-            $this->assertNull($error);
-        } else {
-            $gotMsg = $error->getMessage();
-            $this->assertContains($expMsg, $gotMsg);
+            if ($expMsg === '') {
+                $this->fail('Did not expect to see error: ' . $e->getMessage());
+            }
+        } finally {
+            if ($expMsg !== '' && $thrown === false) {
+                $this->fail('Expected to see error: ' . $expMsg);
+            }
         }
     }
 
     public function connectionProvider()
     {
         return [
-            [$GLOBALS['DB_HOST'], $GLOBALS['DB_USERNAME'], $GLOBALS['DB_PASSWORD'], $GLOBALS['DB_DATABASE'], 3306, true, ''],
-            [$GLOBALS['DB_HOST'], $GLOBALS['DB_USERNAME'], $GLOBALS['DB_PASSWORD'], 'not_existing', 3306, false, "'not_existing'"],
+            [
+                $GLOBALS['TEST_DB_SCHEMA_DUMP1_HOST'],
+                $GLOBALS['TEST_DB_SCHEMA_DUMP1_USERNAME'],
+                $GLOBALS['TEST_DB_SCHEMA_DUMP1_PASSWORD'],
+                $GLOBALS['TEST_DB_SCHEMA_DUMP1_DATABASE'],
+                3306,
+                true,
+                '',
+            ],
+            [
+                $GLOBALS['TEST_DB_SCHEMA_DUMP1_HOST'],
+                $GLOBALS['TEST_DB_SCHEMA_DUMP1_USERNAME'],
+                $GLOBALS['TEST_DB_SCHEMA_DUMP1_PASSWORD'],
+                'not_existing',
+                3306,
+                false,
+                "'not_existing'",
+            ],
         ];
     }
 
     /**
      * @covers ::dbGetTableNames
-     * @covers ::getRowsArray
      */
     public function test_getDbTableNames()
     {
         $tableNames = $this->driver->dbGetTableNames();
+
         $this->assertSame(['bigtable'], $tableNames);
     }
 
@@ -112,10 +130,10 @@ class MySQL_Test extends BaseTest
      */
     public function test_getDbCreateStatement()
     {
-        self::dbDropTable('bigtable');
-        self::dbLoadFixture('bigtable_create.sql');
+        self::dbDropTables('SCHEMA_DUMP1', 'bigtable');
+        self::dbLoadFixtures('SCHEMA_DUMP1', 'bigtable_create.sql');
 
-        $expCreate = self::loadFileFixture('bigtable_create.sql');
+        $expCreate = self::getFixtureData('bigtable_create.sql');
         $gotCreate = $this->driver->dbGetCreateStatement('bigtable');
 
         $this->assertSame(2, count($expCreate));
@@ -152,8 +170,8 @@ class MySQL_Test extends BaseTest
      */
     public function test_getDbCreateStatement_ifNotExist()
     {
-        self::dbDropTable('bigtable');
-        self::dbLoadFixture('bigtable_create.sql');
+        self::dbDropTables('SCHEMA_DUMP1', 'bigtable');
+        self::dbLoadFixtures('SCHEMA_DUMP1', 'bigtable_create.sql');
 
         $gotCreate = $this->driver->dbGetCreateStatement('bigtable', true);
         $gotCreate['create'] = Str::oneLine($gotCreate['create']);
@@ -166,9 +184,8 @@ class MySQL_Test extends BaseTest
      */
     public function test_getDbCreateStatements()
     {
-        self::dbDropAllTables();
-        self::dbLoadFixture('bigtable_create.sql');
-        self::dbLoadFixture('test1.sql');
+        self::dbDropAllTables('SCHEMA_DUMP1');
+        self::dbLoadFixtures('SCHEMA_DUMP1', ['bigtable_create.sql', 'test1.sql']);
 
         $gotCreates = $this->driver->dbGetCreateStatements();
 
@@ -183,8 +200,8 @@ class MySQL_Test extends BaseTest
      */
     public function test_getDbCreateStatements_indexes()
     {
-        self::dbDropAllTables();
-        self::dbLoadFixture('bigtable_create.sql');
+        self::dbDropAllTables('SCHEMA_DUMP1');
+        self::dbLoadFixtures('SCHEMA_DUMP1', ['bigtable_create.sql', 'test1.sql']);
 
         $tableDef = $this->driver->dbGetTableDefinition('bigtable');
 

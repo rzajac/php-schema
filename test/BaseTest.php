@@ -27,18 +27,19 @@ use Kicaj\Test\Helper\TestCase\DbTestCase;
  */
 abstract class BaseTest extends DbTestCase
 {
-    public static function setUpBeforeClass()
-    {
-        self::setupDb();
-        self::dbDropAllTables();
-        parent::setUpBeforeClass();
-    }
-
-    public static function getDefaultConfig()
+    /**
+     * Get schema dump config.
+     *
+     * @param string $testDbName The name of database connection details form phpunit.xml.
+     * @param string $exportType The schema export type.
+     *
+     * @return array
+     */
+    public static function getDbConfig($testDbName, $exportType = SchemaDump::FORMAT_PHP_ARRAY)
     {
         return [
-            'connection' => self::dbGetConfig(),
-            'export_type' => SchemaDump::FORMAT_PHP_ARRAY,
+            'connection' => self::dbGetConfig($testDbName),
+            'export_type' => $exportType,
             'add_if_not_exists' => false,
             'output_file' => 'tmp/schema.php',
         ];

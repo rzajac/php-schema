@@ -157,16 +157,16 @@ class SchemaDump
 
             case self::FORMAT_PHP_FILE:
                 $configArray = var_export($createStatements, true);
-                $ret = "<?php\n\n".'$createStatements = '.$configArray.";\n\n";
-                $ret .= 'return $createStatements;'."\n";
+                $ret = "<?php\n\n" . '$createStatements = ' . $configArray . ";\n\n";
+                $ret .= 'return $createStatements;' . "\n";
                 break;
 
             case self::FORMAT_SQL:
-                $ret = implode("\n\n", array_values($createStatements))."\n";
+                $ret = implode("\n\n", array_values($createStatements)) . "\n";
                 break;
 
             default:
-                throw new SchemaException('unknown format: '.$exportType);
+                throw new SchemaException('unknown format: ' . $exportType);
         }
 
         return $ret;

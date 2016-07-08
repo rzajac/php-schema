@@ -50,22 +50,23 @@ class DumpCommand extends Command
     {
         // Set default configuration
         $this->config = [
-            'connection' => [
+            'connection'               => [
                 DbConnector::DB_CFG_USERNAME => 'testUser',
                 DbConnector::DB_CFG_PASSWORD => 'testUserPass',
-                DbConnector::DB_CFG_HOST => 'localhost',
-                DbConnector::DB_CFG_PORT => '3306',
+                DbConnector::DB_CFG_HOST     => 'localhost',
+                DbConnector::DB_CFG_PORT     => '3306',
                 DbConnector::DB_CFG_DATABASE => 'test',
             ],
             DbConnector::DB_CFG_DRIVER => DbConnector::DB_DRIVER_MYSQL,
-            'export_type' => SchemaDump::FORMAT_PHP_ARRAY,
-            'add_if_not_exists' => true,
-            'output_file' => 'tmp/schema.php',
+            'export_type'              => SchemaDump::FORMAT_PHP_ARRAY,
+            'add_if_not_exists'        => true,
+            'output_file'              => 'tmp/schema.php',
         ];
 
         $this->setName('dump')
              ->setDescription('Dump database schema')
-             ->addOption('config', 'c', InputOption::VALUE_OPTIONAL, 'The path to configuration JSON file. If not set it will search for db_config.json in current directory');
+             ->addOption('config', 'c', InputOption::VALUE_OPTIONAL,
+                 'The path to configuration JSON file. If not set it will search for db_config.json in current directory');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -73,7 +74,7 @@ class DumpCommand extends Command
         $configPath = $input->getOption('config');
 
         if ($configPath === null) {
-            $configPath = getcwd().'/db_config.json';
+            $configPath = getcwd() . '/db_config.json';
         }
 
         $this->configDir = realpath(dirname($configPath));
@@ -158,9 +159,9 @@ class DumpCommand extends Command
     public function getPath($path)
     {
         if ($path[0] != '/') {
-            $path = '/'.$path;
+            $path = '/' . $path;
         }
 
-        return $this->configDir.$path;
+        return $this->configDir . $path;
     }
 }

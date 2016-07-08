@@ -18,8 +18,8 @@
 namespace Kicaj\Test\SchemaDump\Database;
 
 use Kicaj\SchemaDump\Database\SchemaDumpFactory;
-use Kicaj\SchemaDump\SchemaException;
 use Kicaj\Test\SchemaDump\BaseTest;
+use Kicaj\Tools\Db\DatabaseException;
 use Kicaj\Tools\Db\DbConnector;
 use Kicaj\Tools\Exception;
 
@@ -30,7 +30,7 @@ use Kicaj\Tools\Exception;
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class DbGet_Test extends BaseTest
+class SchemaDumpFactory_Test extends BaseTest
 {
     /**
      * @dataProvider factoryProvider
@@ -42,7 +42,7 @@ class DbGet_Test extends BaseTest
      */
     public function test_factory($driverName, $expMsg)
     {
-        $dbConfig = self::getDefaultConfig();
+        $dbConfig = self::getDbConfig('SCHEMA_DUMP1');
         $dbConfig['connection']['driver'] = $driverName;
 
         try {
@@ -75,20 +75,22 @@ class DbGet_Test extends BaseTest
      */
     public function test_factoryConnErr()
     {
-        $dbConfig = self::getDefaultConfig();
+        SchemaDumpFactory::_resetInstances();
+
+        $dbConfig = self::getDbConfig('SCHEMA_DUMP1');
         $dbConfig['connection']['password'] = 'wrongOne';
 
         try {
             SchemaDumpFactory::factory($dbConfig, true);
             $thrown = false;
             $errMsg = '';
-        } catch (SchemaException $e) {
+        } catch (DatabaseException $e) {
             $thrown = true;
             $errMsg = $e->getMessage();
         }
 
         $this->assertTrue($thrown);
-        $this->assertContains('database connection failed', $errMsg);
+        $this->assertContains('Access denied for user', $errMsg);
     }
 
     /**
@@ -96,7 +98,7 @@ class DbGet_Test extends BaseTest
      */
     public function test_factory_sameInstance()
     {
-        $dbConfig = self::getDefaultConfig();
+        $dbConfig = self::getDbConfig('SCHEMA_DUMP1');
 
         $db1 = SchemaDumpFactory::factory($dbConfig);
         $db2 = SchemaDumpFactory::factory($dbConfig);

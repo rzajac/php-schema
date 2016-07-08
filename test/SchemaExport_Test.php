@@ -22,9 +22,7 @@ class SchemaExport_Test extends BaseTest
 
     public function setUp()
     {
-        parent::setUp();
-
-        $this->schemaDump = SchemaDump::make(self::getDefaultConfig());
+        $this->schemaDump = SchemaDump::make(self::getDbConfig('SCHEMA_DUMP1'));
     }
 
     /**
@@ -34,7 +32,7 @@ class SchemaExport_Test extends BaseTest
     public function test___construct()
     {
         SchemaDumpFactory::_resetInstances();
-        $se = SchemaDump::make(self::getDefaultConfig());
+        $se = SchemaDump::make(self::getDbConfig('SCHEMA_DUMP1'));
         $this->assertFalse($se->hasError());
     }
 
@@ -44,7 +42,7 @@ class SchemaExport_Test extends BaseTest
     public function test___construct_error()
     {
         SchemaDumpFactory::_resetInstances();
-        $dbConfig = self::getDefaultConfig();
+        $dbConfig = self::getDbConfig('SCHEMA_DUMP1');
         $dbConfig['connection']['password'] = 'wrongOne';
 
         $se = SchemaDump::make($dbConfig);
@@ -80,8 +78,8 @@ class SchemaExport_Test extends BaseTest
      */
     public function test_getCreateStatements_phpArray()
     {
-        self::dbDropAllTables();
-        self::dbLoadFixture('test1.sql');
+        self::dbDropAllTables('SCHEMA_DUMP1');
+        self::dbLoadFixtures('SCHEMA_DUMP1', 'test1.sql');
 
         $gotDef = $this->schemaDump->getCreateStatements();
         $got = $this->schemaDump->getCreateStatements(SchemaDump::FORMAT_PHP_ARRAY);
@@ -96,15 +94,15 @@ class SchemaExport_Test extends BaseTest
      */
     public function test_getCreateStatements_phpFile()
     {
-        self::dbDropAllTables();
-        self::dbLoadFixture('test1.sql');
+        self::dbDropAllTables('SCHEMA_DUMP1');
+        self::dbLoadFixtures('SCHEMA_DUMP1', 'test1.sql');
 
-        $dbConfig = self::getDefaultConfig();
+        $dbConfig = self::getDbConfig('SCHEMA_DUMP1');
         $dbConfig['add_if_not_exists'] = true;
 
         $got = SchemaDump::make($dbConfig)->getCreateStatements(SchemaDump::FORMAT_PHP_FILE);
 
-        $this->assertSame(self::loadFileFixture('test1.txt'), $got);
+        $this->assertSame(self::getFixtureData('test1.txt'), $got);
     }
 
     /**
@@ -112,12 +110,12 @@ class SchemaExport_Test extends BaseTest
      */
     public function test_getCreateStatements_sql()
     {
-        self::dbDropAllTables();
-        self::dbLoadFixture('test1.sql');
+        self::dbDropAllTables('SCHEMA_DUMP1');
+        self::dbLoadFixtures('SCHEMA_DUMP1', 'test1.sql');
 
         $got = $this->schemaDump->getCreateStatements(SchemaDump::FORMAT_SQL);
         $got = Str::oneLine($got);
-        $expected = self::loadFileFixture('test1.sql')[0];
+        $expected = self::getFixtureData('test1.sql')[0];
 
         $this->assertSame($expected, $got);
     }

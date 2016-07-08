@@ -6,12 +6,12 @@
   "license": "Apache License 2.0",
   "require": {
     "php": ">=5.5",
-    "rzajac/phptools": "0.3.*",
+    "rzajac/phptools": "0.4.*",
     "symfony/console": "~v2.7"
   },
   "require-dev": {
     "phpunit/phpunit": "*",
-    "rzajac/php-test-helper": "0.3.*",
+    "rzajac/php-test-helper": "0.5.*",
     "phpdocumentor/phpdocumentor": "~2.8"
   },
   "bin": [

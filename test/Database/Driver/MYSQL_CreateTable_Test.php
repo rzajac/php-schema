@@ -18,6 +18,7 @@ namespace Database\Driver;
 
 use Kicaj\SchemaDump\Database\SchemaDumpFactory;
 use Kicaj\SchemaDump\SchemaGetter;
+use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\SchemaDump\BaseTest;
 
 /**
@@ -29,18 +30,29 @@ use Kicaj\Test\SchemaDump\BaseTest;
  */
 class MySQL_CreateTable_Test extends BaseTest
 {
-    protected static $residentFixtures = ['bigtable_create.sql'];
-
     /**
      * @var SchemaGetter
      */
     protected $schema;
 
+    /**
+     * MySQL database test helper.
+     *
+     * @var DbItf
+     */
+    protected $mysql;
+
+    public static function setUpBeforeClass()
+    {
+        self::dbDropAllTables('SCHEMA_DUMP1');
+        self::dbLoadFixtures('SCHEMA_DUMP1', 'bigtable_create.sql');
+    }
+
     public function setUp()
     {
         parent::setUp();
 
-        $dbConfig = self::getDefaultConfig();
+        $dbConfig = self::getDbConfig('SCHEMA_DUMP1');
         $this->schema = SchemaDumpFactory::factory($dbConfig);
     }
 
@@ -107,24 +119,24 @@ class MySQL_CreateTable_Test extends BaseTest
 
         $expected = [
             0 => [
-                    0 => 'u',
-                    1 => 'UNIQUE',
-                    2 => [0 => 'chr'],
+                0 => 'u',
+                1 => 'UNIQUE',
+                2 => [0 => 'chr'],
             ],
             1 => [
-                    0 => 'vchr',
-                    1 => 'UNIQUE',
-                    2 => [0 => 'vchr'],
-                ],
+                0 => 'vchr',
+                1 => 'UNIQUE',
+                2 => [0 => 'vchr'],
+            ],
             2 => [
-                    0 => 'tint',
-                    1 => 'KEY',
-                    2 => [0 => 'tint'],
+                0 => 'tint',
+                1 => 'KEY',
+                2 => [0 => 'tint'],
             ],
             3 => [
-                    0 => 'b',
-                    1 => 'KEY',
-                    2 => [0 => 'sint'],
+                0 => 'b',
+                1 => 'KEY',
+                2 => [0 => 'sint'],
             ],
         ];
 

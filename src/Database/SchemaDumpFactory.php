@@ -20,6 +20,7 @@ namespace Kicaj\SchemaDump\Database;
 use Kicaj\SchemaDump\Database\Driver\MySQL;
 use Kicaj\SchemaDump\SchemaException;
 use Kicaj\SchemaDump\SchemaGetter;
+use Kicaj\Tools\Db\DatabaseException;
 use Kicaj\Tools\Db\DbConnect;
 use Kicaj\Tools\Db\DbConnector;
 
@@ -48,6 +49,7 @@ final class SchemaDumpFactory
      * @param bool  $connect  Set to true to also connect to the database
      *
      * @throws SchemaException
+     * @throws DatabaseException
      *
      * @return SchemaGetter
      */
@@ -65,13 +67,13 @@ final class SchemaDumpFactory
                 break;
 
             default:
-                throw new SchemaException('unknown database driver name: '.$dbConfig['connection']['driver']);
+                throw new SchemaException('unknown database driver name: ' . $dbConfig['connection']['driver']);
         }
 
         self::$instances[$key]->dbSetup($dbConfig['connection']);
 
-        if ($connect && !self::$instances[$key]->dbConnect()) {
-            throw new SchemaException('database connection failed: '.self::$instances[$key]->getError()->getMessage());
+        if ($connect) {
+            self::$instances[$key]->dbConnect();
         }
 
         return self::$instances[$key];
@@ -81,7 +83,7 @@ final class SchemaDumpFactory
     /**
      * Reset instances cache.
      *
-     * This is used only during unit tests.1391j8ri9X?o
+     * This is used only during unit tests.
      */
     public static function _resetInstances()
     {

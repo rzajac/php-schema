@@ -117,6 +117,15 @@ where Jeremy Harris shows how you can load fixtures just for specific tables in 
 If you like to keep your database schema and data in sync across many instances take a 
 look at my schema sync project [https://github.com/rzajac/dbupdate](https://github.com/rzajac/dbupdate).
 
+## Running unit tests
+
+```sql
+CREATE USER 'testUser'@'localhost' IDENTIFIED BY 'testUserPass';
+
+CREATE DATABASE testSchemaDump DEFAULT CHARACTER SET = 'utf8';
+GRANT CREATE ROUTINE, CREATE VIEW, ALTER, SHOW VIEW, CREATE, ALTER ROUTINE, EVENT, INSERT, SELECT, DELETE, TRIGGER, GRANT OPTION, REFERENCES, UPDATE, DROP, EXECUTE, LOCK TABLES, CREATE TEMPORARY TABLES TO 'testUser'@'localhost';
+```
+
 ## License
 
 Released under the Apache License 2.0.

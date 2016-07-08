@@ -22,6 +22,7 @@ use Kicaj\SchemaDump\SchemaDump;
 use Kicaj\SchemaDump\SchemaException;
 use Kicaj\SchemaDump\SchemaGetter;
 use Kicaj\SchemaDump\TableDefinition;
+use Kicaj\Tools\Db\DatabaseException;
 use Kicaj\Tools\Db\DbConnector;
 use Kicaj\Tools\Traits\Error;
 use mysqli;
@@ -103,22 +104,6 @@ class MySQL implements SchemaGetter
      */
     protected $dbConfig;
 
-    /**
-     * Configure database.
-     *
-     * The database connection info array must have keys:
-     *
-     * - host: string
-     * - username: string
-     * - password: string
-     * - database: string
-     * - port: int
-     * - debug: bool
-     *
-     * @param array $dbConfig The database configuration
-     *
-     * @return MySQL
-     */
     public function dbSetup(array $dbConfig)
     {
         $this->dbConfig = $dbConfig;
@@ -126,38 +111,38 @@ class MySQL implements SchemaGetter
         return $this;
     }
 
-    /**
-     * Connect to database.
-     *
-     * @return bool Returns true on success.
-     */
     public function dbConnect()
     {
-        // Database connection config
-        $host = $this->dbConfig[DbConnector::DB_CFG_HOST];
-        $port = $this->dbConfig[DbConnector::DB_CFG_PORT];
-        $user = $this->dbConfig[DbConnector::DB_CFG_USERNAME];
-        $pass = $this->dbConfig[DbConnector::DB_CFG_PASSWORD];
-
         $this->dbName = $this->dbConfig[DbConnector::DB_CFG_DATABASE];
 
         mysqli_report(MYSQLI_REPORT_STRICT);
 
         // Connect to database
         try {
-            $this->mysqli = new mysqli($host, $user, $pass, $this->dbName, $port);
+            $this->mysqli = new mysqli(
+                $this->dbConfig[DbConnector::DB_CFG_HOST],
+                $this->dbConfig[DbConnector::DB_CFG_USERNAME],
+                $this->dbConfig[DbConnector::DB_CFG_PASSWORD],
+                $this->dbName,
+                $this->dbConfig[DbConnector::DB_CFG_PORT]);
         } catch (\Exception $e) {
-            return $this->addError($e);
+            throw DatabaseException::makeFromException($e);
         }
 
-        return true;
+        return $this;
     }
 
-    /**
-     * Close database connection.
-     *
-     * @return bool
-     */
+    public function useDatabase($dbName)
+    {
+        if (!$this->mysqli->select_db($dbName)) {
+            throw new DatabaseException($this->mysqli->error);
+        }
+
+        $this->dbName = $dbName;
+
+        return $this;
+    }
+
     public function dbClose()
     {
         if ($this->mysqli) {
@@ -170,45 +155,27 @@ class MySQL implements SchemaGetter
         return true;
     }
 
-    /**
-     * Get database table names.
-     *
-     * @return string[] The table names
-     */
     public function dbGetTableNames()
     {
-        $result = $this->mysqli->query('SHOW TABLES');
-        $tableNames = $this->getRowsArray($result);
+        $sql = sprintf('SHOW TABLES FROM `%s`', $this->dbName);
+        $result = $this->mysqli->query($sql);
+        if (!$result) {
+            throw new DatabaseException($this->mysqli->error);
+        }
 
         $ret = [];
-        foreach ($tableNames as $tableName) {
-            if (isset($tableName['Tables_in_'.$this->dbName])) {
-                $ret[] = $tableName['Tables_in_'.$this->dbName];
-            } else {
-                $ret[] = $tableName['Tables_in_'.strtolower($this->dbName)];
+        while ($row = $result->fetch_assoc()) {
+            foreach ($row as $tableName) {
+                $ret[] = $tableName;
             }
         }
 
         return $ret;
     }
 
-    /**
-     * Get create statement for the given table name.
-     *
-     * Method returns associative array where keys are table names and values are arrays with keys:
-     *
-     * - create - CREATE TABLE or VIEW statement
-     * - type   - table, view ( one of the self::CREATE_TYPE_* )
-     * - name   - table name
-     *
-     * @param string $tableName      The table name to get CREATE statement for
-     * @param bool   $addIfNotExists Set to true to add IF NOT EXIST to CREATE TABLE
-     *
-     * @return array
-     */
     public function dbGetCreateStatement($tableName, $addIfNotExists = false)
     {
-        $result = $this->mysqli->query('SHOW CREATE TABLE '.$tableName);
+        $result = $this->mysqli->query('SHOW CREATE TABLE ' . $tableName);
         $createStatementResp = $this->getRowsArray($result);
 
         $createStatement = array_pop($createStatementResp);
@@ -231,21 +198,14 @@ class MySQL implements SchemaGetter
 
         $ret = [
             'create' => $createStatement[$key],
-            'drop' => $this->dbGetTableDropCommand($tableName),
-            'type' => $type,
-            'name' => $tableName,
+            'drop'   => $this->dbGetTableDropCommand($tableName),
+            'type'   => $type,
+            'name'   => $tableName,
         ];
 
         return $this->fixCreateStatement($ret, $addIfNotExists);
     }
 
-    /**
-     * Get create statements for all database tables.
-     *
-     * @param bool $addIfNotExists Set to true to add IF NOT EXIST to CREATE TABLE
-     *
-     * @return array See SchemaGetter::dbGetCreateStatement
-     */
     public function dbGetCreateStatements($addIfNotExists = false)
     {
         $tableNames = $this->dbGetTableNames();
@@ -262,33 +222,17 @@ class MySQL implements SchemaGetter
         return $createStatements;
     }
 
-    /**
-     * Get database table drop command.
-     *
-     * @param string $tableName The table name
-     *
-     * @return string
-     */
     public function dbGetTableDropCommand($tableName)
     {
-        return 'DROP TABLE IF EXISTS `'.$tableName.'`;';
+        return 'DROP TABLE IF EXISTS `' . $tableName . '`;';
     }
 
-    /**
-     * Return table definitions for given database table.
-     *
-     * @param string $tableName The database table name
-     *
-     * @throws SchemaException
-     *
-     * @return TableDefinition
-     */
     public function dbGetTableDefinition($tableName)
     {
         $create = $this->dbGetCreateStatement($tableName);
 
         if (empty($create)) {
-            throw new SchemaException('no database table: '.$tableName);
+            throw new SchemaException('no database table: ' . $tableName);
         }
 
         $lines = explode("\n", $create['create']);
@@ -337,7 +281,7 @@ class MySQL implements SchemaGetter
         preg_match('/(.*)?KEY (?:`(.*?)` )?\((.*)\)/', $keyDef, $matches);
 
         if (count($matches) != 4) {
-            throw new SchemaException('cannot parse table index: '.$keyDef);
+            throw new SchemaException('cannot parse table index: ' . $keyDef);
         }
 
         $type = trim($matches[1]);
@@ -382,7 +326,7 @@ class MySQL implements SchemaGetter
         static::setColDefExtra($colDef, $colExtra);
 
         if (in_array($colDef->getDbType(), [self::TYPE_ENUM, self::TYPE_SET])) {
-            $colType = $colType.' '.$colExtra;
+            $colType = $colType . ' ' . $colExtra;
         }
 
         // Set column lengths
@@ -419,7 +363,7 @@ class MySQL implements SchemaGetter
             $colDefExtra = trim($colDefExtra, ',');
             preg_match('/DEFAULT (.*)[ ,]?/', $colDefExtra, $matches);
             if (count($matches) != 2) {
-                throw new SchemaException('could not decipher DEFAULT: '.$colDefExtra);
+                throw new SchemaException('could not decipher DEFAULT: ' . $colDefExtra);
             }
             $defaultValue = trim($matches[1]);
             $defaultValue = trim($defaultValue, '\'');
@@ -731,7 +675,7 @@ class MySQL implements SchemaGetter
             return;
         }
 
-        throw new SchemaException('unknown type: '.$mysqlDef);
+        throw new SchemaException('unknown type: ' . $mysqlDef);
     }
 
     /**
@@ -853,7 +797,7 @@ class MySQL implements SchemaGetter
                 break;
 
             default:
-                throw new SchemaException('unknown database type: '.$colDef->getDbType());
+                throw new SchemaException('unknown database type: ' . $colDef->getDbType());
         }
     }
 
@@ -903,6 +847,7 @@ class MySQL implements SchemaGetter
         }
 
         $result->free();
+
         return $rows;
     }
 }
