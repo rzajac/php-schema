@@ -1,26 +1,28 @@
 {
-  "name": "rzajac/schemadump",
+  "name": "rzajac/schema",
   "description": "Database schema exporter",
   "keywords": ["database", "schema"],
   "type": "library",
   "license": "Apache License 2.0",
   "require": {
     "php": ">=5.5",
-    "rzajac/phptools": "0.4.*",
+    "rzajac/phptools": "0.5.*",
     "symfony/console": "~v2.7"
   },
   "require-dev": {
     "phpunit/phpunit": "*",
     "rzajac/php-test-helper": "0.5.*",
-    "phpdocumentor/phpdocumentor": "~2.8"
+    "phpdocumentor/phpdocumentor": "~2.8",
+    "mikey179/vfsStream": "~1.6",
+    "mockery/mockery": "^0.9.5"
   },
   "bin": [
-    "schemadump"
+    "schema"
   ],
   "autoload": {
     "psr-4": {
-      "Kicaj\\SchemaDump\\": "src/",
-      "Kicaj\\Test\\SchemaDump\\": "test/"
+      "Kicaj\\Schema\\": "src/",
+      "Kicaj\\Test\\Schema\\": "test/"
     }
   }
 }

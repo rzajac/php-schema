@@ -14,15 +14,16 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\SchemaDump\Database;
+namespace Kicaj\Test\Schema;
 
-use Kicaj\SchemaDump\ColumnDefinition;
+use Kicaj\Schema\ColumnDefinition;
+use Kicaj\Schema\Schema;
 use Kicaj\Tools\Db\DbConnector;
 
 /**
  * ColumnDefinition_Test.
  *
- * @coversDefaultClass \Kicaj\SchemaDump\ColumnDefinition
+ * @coversDefaultClass \Kicaj\Schema\ColumnDefinition
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
@@ -37,9 +38,11 @@ class ColumnDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test___construct()
     {
+        // When
         $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
-        $this->assertInstanceOf('\Kicaj\SchemaDump\ColumnDefinition', $cd);
+        // Then
+        $this->assertInstanceOf('\Kicaj\Schema\ColumnDefinition', $cd);
         $this->assertSame('', $cd->getPhpType());
         $this->assertSame(false, $cd->isUnsigned());
         $this->assertSame(false, $cd->isNotNull());
@@ -63,9 +66,13 @@ class ColumnDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getPhpType()
     {
+        // Given
         $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
+        // When
         $cd->setPhpType('testType');
+
+        // Then
         $this->assertSame('testType', $cd->getPhpType());
     }
 
@@ -75,9 +82,13 @@ class ColumnDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_isIsUnsigned()
     {
+        // Given
         $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
+        // When
         $cd->setIsUnsigned(true);
+
+        // Then
         $this->assertTrue($cd->isUnsigned());
     }
 
@@ -87,9 +98,13 @@ class ColumnDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_isNotNull()
     {
+        // Given
         $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
+        // When
         $cd->setNotNull(true);
+
+        // Then
         $this->assertTrue($cd->isNotNull());
     }
 
@@ -99,9 +114,13 @@ class ColumnDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_isIsAutoincrement()
     {
+        // Given
         $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
+        // When
         $cd->setIsAutoincrement(true);
+
+        // Then
         $this->assertTrue($cd->isAutoincrement());
     }
 
@@ -111,11 +130,62 @@ class ColumnDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_isPartOfPk()
     {
+        // Given
         $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
+        // When
         $cd->setIsPartOfPk(true);
+
+        // Then
         $this->assertTrue($cd->isPartOfPk());
     }
+
+    /**
+     * @dataProvider setDefaultValueProvider
+     *
+     * @covers ::getDefaultValue
+     * @covers ::setDefaultValue
+     * @covers ::setPhpType
+     *
+     * @param mixed  $defaultValue
+     * @param string $phpType The one of the Schema::PHP_TYPE_* constants.
+     * @param mixed  $expected
+     */
+    public function test_setDefaultValue($defaultValue, $phpType, $expected)
+    {
+        // Given
+        $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
+
+        // When
+        $cd->setPhpType($phpType)->setDefaultValue($defaultValue);
+
+        // Then
+        $this->assertSame($expected, $cd->getDefaultValue());
+    }
+
+    public function setDefaultValueProvider()
+    {
+        return [
+            [null, 'does_not_matter', null],
+            [123, Schema::PHP_TYPE_INT, 123],
+            ['123', Schema::PHP_TYPE_INT, 123],
+            ['123', Schema::PHP_TYPE_FLOAT, 123.0],
+            ['123.45', Schema::PHP_TYPE_FLOAT, 123.45],
+            ['true', Schema::PHP_TYPE_BOOL, true],
+            [true, Schema::PHP_TYPE_BOOL, true],
+            [1, Schema::PHP_TYPE_BOOL, true],
+
+            [false, Schema::PHP_TYPE_BOOL, false],
+            [0, Schema::PHP_TYPE_BOOL, false],
+            [0.0, Schema::PHP_TYPE_BOOL, false],
+            ['', Schema::PHP_TYPE_BOOL, false],
+            [[], Schema::PHP_TYPE_BOOL, false],
+            [null, Schema::PHP_TYPE_BOOL, false],
+
+            [null, Schema::PHP_TYPE_ARRAY, null],
+        ];
+    }
+
 
     /**
      * @covers ::getDefaultValue
@@ -123,9 +193,13 @@ class ColumnDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getDefaultValue()
     {
+        // Given
         $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
+        // When
         $cd->setDefaultValue('default');
+
+        // Then
         $this->assertSame('default', $cd->getDefaultValue());
     }
 
@@ -135,9 +209,13 @@ class ColumnDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getMinValue()
     {
+        // Given
         $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
+        // When
         $cd->setMinValue(123);
+
+        // Then
         $this->assertSame(123, $cd->getMinValue());
     }
 
@@ -147,9 +225,13 @@ class ColumnDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getMaxValue()
     {
+        // Given
         $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
+        // When
         $cd->setMaxValue(123);
+
+        // Then
         $this->assertSame(123, $cd->getMaxValue());
     }
 
@@ -159,9 +241,13 @@ class ColumnDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getMinLength()
     {
+        // Given
         $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
+        // When
         $cd->setMinLength(123);
+
+        // Then
         $this->assertSame(123, $cd->getMinLength());
     }
 
@@ -171,9 +257,13 @@ class ColumnDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getMaxLength()
     {
+        // Given
         $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
+        // When
         $cd->setMaxLength(123);
+
+        // Then
         $this->assertSame(123, $cd->getMaxLength());
     }
 
@@ -183,9 +273,13 @@ class ColumnDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getDbType()
     {
+        // Given
         $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
+        // When
         $cd->setDbType('dbType');
+
+        // Then
         $this->assertSame('dbType', $cd->getDbType());
     }
 
@@ -195,9 +289,13 @@ class ColumnDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getValidValues()
     {
+        // Given
         $cd = ColumnDefinition::make('testColumn', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
+        // When
         $cd->setValidValues(['dbType', 'dbType1']);
+
+        // Then
         $this->assertSame(['dbType', 'dbType1'], $cd->getValidValues());
     }
 }

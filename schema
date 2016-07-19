@@ -18,7 +18,7 @@
  */
 
 // Require composer autoload file
-use Kicaj\SchemaDump\DumpCommand;
+use Kicaj\Schema\ExportCommand;
 use Symfony\Component\Console\Application;
 
 foreach (
@@ -36,10 +36,10 @@ foreach (
 
 /** @var Composer\Autoload\ClassLoader $classLoader */
 
-$dumpCmd = new DumpCommand();
+$exportCmd = new ExportCommand();
 
 $application = new Application();
-$application->setName('Database schema dumper');
+$application->setName('Database schema exporter');
 $application->setVersion('0.6.0');
-$application->add($dumpCmd);
+$application->add($exportCmd);
 $application->run();

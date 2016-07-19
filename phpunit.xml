@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit colors="true" bootstrap="test/bootstrap.php">
     <php>
-        <var name="TEST_DB_SCHEMA_DUMP1_HOST" value="127.0.0.1"/>
-        <var name="TEST_DB_SCHEMA_DUMP1_PORT" value="3306"/>
-        <var name="TEST_DB_SCHEMA_DUMP1_USERNAME" value="testUser"/>
-        <var name="TEST_DB_SCHEMA_DUMP1_PASSWORD" value="testUserPass"/>
-        <var name="TEST_DB_SCHEMA_DUMP1_DATABASE" value="testSchemaDump"/>
-        <var name="TEST_DB_SCHEMA_DUMP1_DRIVER" value="mysql"/>
+        <var name="TEST_DB_SCHEMA1_HOST" value="127.0.0.1"/>
+        <var name="TEST_DB_SCHEMA1_PORT" value="3306"/>
+        <var name="TEST_DB_SCHEMA1_USERNAME" value="testUser"/>
+        <var name="TEST_DB_SCHEMA1_PASSWORD" value="testUserPass"/>
+        <var name="TEST_DB_SCHEMA1_DATABASE" value="testSchemaLib"/>
+        <var name="TEST_DB_SCHEMA1_DRIVER" value="mysql"/>
 
         <var name="TEST_FIXTURE_DIRECTORY" value="test/fixtures"/>
     </php>

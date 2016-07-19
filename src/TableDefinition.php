@@ -14,9 +14,9 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\SchemaDump;
+namespace Kicaj\Schema;
 
-use Kicaj\SchemaDump\Database\Driver\MySQL;
+use Kicaj\Schema\Database\Driver\MySQL;
 
 /**
  * Database table definition.
@@ -38,6 +38,8 @@ class TableDefinition
      * @var string
      */
     protected $tableName;
+
+    protected $type;
 
     /**
      * Primary key column names.
@@ -62,23 +64,36 @@ class TableDefinition
     /**
      * TableDefinition constructor.
      *
-     * @param string $tableName The database table name
+     * @param string $tableName The database table name.
+     * @param string $type      The table or view. One of the SchemaGetter::CREATE_TYPE_* constants.
      */
-    public function __construct($tableName)
+    public function __construct($tableName, $type = SchemaGetter::CREATE_TYPE_TABLE)
     {
         $this->tableName = $tableName;
+        $this->type = $type;
+    }
+
+    /**
+     * Return table type.
+     *
+     * @return string The one of the SchemaGetter::CREATE_TYPE_* values.
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
     /**
      * Make.
      *
      * @param string $tableName The database table name
+     * @param string $type      The table or view. One of the SchemaGetter::CREATE_TYPE_* constants.
      *
      * @return static
      */
-    public static function make($tableName)
+    public static function make($tableName, $type = SchemaGetter::CREATE_TYPE_TABLE)
     {
-        return new static($tableName);
+        return new static($tableName, $type);
     }
 
     /**

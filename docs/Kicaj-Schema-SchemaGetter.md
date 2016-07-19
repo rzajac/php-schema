@@ -1,4 +1,4 @@
-## Interface Kicaj\SchemaDump\SchemaGetter
+## Interface Kicaj\Schema\SchemaGetter
 Get database schema interface.
 
 ## Extends
@@ -10,6 +10,7 @@ Get database schema interface.
 ```php
 const CREATE_TYPE_TABLE = 'table';
 const CREATE_TYPE_VIEW = 'view';
+const CREATE_TYPE_NONE = '';
 ```
 
 ## Methods
@@ -27,16 +28,23 @@ Get database table names.
 public function dbGetTableNames() : string[]
 ```
 
+Throws:
+- Kicaj\Tools\Db\DatabaseException
+
 Returns: **string[]** - The table names
 
 -------
 #### dbGetTableDropCommand
 Get database table drop command.
 ```php
-public function dbGetTableDropCommand(string $tableName) : string
+public function dbGetTableDropCommand(string $tableName, string $type) : string
 ```
 Arguments:
-- _$tableName_ **string** - The table name
+- _$tableName_ **string** - The table name, 
+- _$type_ **string** - The table or view. Onr of the self:: CREATE_TYPE_* constants.
+
+Throws:
+- [Kicaj\Schema\SchemaException](Kicaj-Schema-SchemaException.md)
 
 Returns: **string**
 
@@ -56,18 +64,24 @@ Arguments:
 - _$tableName_ **string** - The table name to get CREATE statement for, 
 - _$addIfNotExists_ **boolean** - Set to true to add IF NOT EXIST to CREATE TABLE
 
+Throws:
+- Kicaj\Tools\Db\DatabaseException
+
 Returns: **array**
 
 -------
 #### dbGetTableDefinition
 Return table definitions for given database table.
 ```php
-public function dbGetTableDefinition(string $tableName) : Kicaj\SchemaDump\TableDefinition
+public function dbGetTableDefinition(string $tableName) : Kicaj\Schema\TableDefinition
 ```
 Arguments:
 - _$tableName_ **string** - The database table name
 
-Returns: **[Kicaj\SchemaDump\TableDefinition](Kicaj-SchemaDump-TableDefinition.md)**
+Throws:
+- Kicaj\Tools\Db\DatabaseException
+
+Returns: **[Kicaj\Schema\TableDefinition](Kicaj-Schema-TableDefinition.md)**
 
 -------
 #### dbGetCreateStatements
@@ -77,6 +91,9 @@ public function dbGetCreateStatements(boolean $addIfNotExists) : array
 ```
 Arguments:
 - _$addIfNotExists_ **boolean** - Set to true to add IF NOT EXIST to CREATE TABLE
+
+Throws:
+- Kicaj\Tools\Db\DatabaseException
 
 Returns: **array** - See SchemaGetter::dbGetCreateStatement
 

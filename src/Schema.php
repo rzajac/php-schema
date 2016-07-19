@@ -15,42 +15,49 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\SchemaDump;
+namespace Kicaj\Schema;
 
-use Kicaj\SchemaDump\Database\SchemaDumpFactory;
-use Kicaj\Tools\Traits\Error;
+use Kicaj\Schema\Database\SchemaFactory;
+use Kicaj\Tools\Db\DatabaseException;
 
 /**
- * SchemaDump.
+ * Schema.
  *
- * Dumps MySQL database tables CREATE statements to a file.
+ * Exports MySQL database tables CREATE statements to a file.
  *
- * There are two dump modes:
- *  - as PHP array - creates includable PHP file with $createStatements
- *    associative array where keys are table names and values are SQL CREATE statements.
+ * There are two export modes:
+ *  - as PHP array      - creates includable PHP file with $createStatements associative array
+ *                        where keys are table names and values are SQL CREATE statements.
  *  - as SQL statements - creates file with CREATE statements for all tables in given database.
  *
- * This tool not only dumps CREATE statements but rewrites it in following way:
+ * This tool not only exports CREATE statements but rewrites it in following way:
  *  - resets AUTO_INCREMENT to 1
  *  - adds CREATE TABLE IF NOT EXISTS (configurable)
  *  - adds DROP TABLE IF EXISTS (configurable)
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class SchemaDump
+class Schema
 {
-    use Error;
+    /** Schema returned as a string which is valid PHP file. */
+    const FORMAT_PHP_FILE = 'php_file';
 
-    /** String php array schema format */
-    const FORMAT_PHP_FILE = 'phpFile';
+    /** Schema returned as PHP array. */
+    const FORMAT_PHP_ARRAY = 'php_array';
 
-    /** Php array schema format */
-    const FORMAT_PHP_ARRAY = 'phpArray';
-
-    /** SQL schema format */
+    /** Schema returned as SQL. */
     const FORMAT_SQL = 'sql';
 
-    /** PHP types */
+    /** Configuration key for database connection configuration. */
+    const CONFIG_KEY_CONNECTION = 'connection';
+    /** Configuration key for export type. */
+    const CONFIG_KEY_EXPORT_FORMAT = 'export_format';
+    /** Configuration key for add is not exist. */
+    const CONFIG_KEY_AINE = 'add_if_not_exists';
+    /** Configuration key for output file path. */
+    const CONFIG_KEY_OUTPUT_FILE = 'output_file';
+
+    /** PHP types. */
     const PHP_TYPE_INT = 'int';
     const PHP_TYPE_STRING = 'string';
     const PHP_TYPE_FLOAT = 'float';
@@ -68,7 +75,7 @@ class SchemaDump
     const COLUMN_AUTOINCREMENT = 'autoincrement';
 
     /**
-     * Schema dump configuration.
+     * Schema export configuration.
      *
      * @var array
      */
@@ -84,17 +91,15 @@ class SchemaDump
     /**
      * Constructor.
      *
-     * @param array $dbConfig The database configuration
+     * @throws SchemaException
+     * @throws DatabaseException
+     *
+     * @param array $dbConfig The database configuration.
      */
     public function __construct(array $dbConfig)
     {
         $this->config = $dbConfig;
-
-        try {
-            $this->dbDrv = SchemaDumpFactory::factory($dbConfig, true);
-        } catch (\Exception $e) {
-            $this->addError($e);
-        }
+        $this->dbDrv = SchemaFactory::factory($dbConfig, true);
     }
 
     /**
@@ -102,7 +107,10 @@ class SchemaDump
      *
      * @param array $dbConfig The database configuration
      *
-     * @return SchemaDump
+     * @throws SchemaException
+     * @throws DatabaseException
+     *
+     * @return Schema
      */
     public static function make(array $dbConfig)
     {
@@ -140,12 +148,12 @@ class SchemaDump
      */
     public function getCreateStatements($format = null)
     {
-        $exportType = $this->config['export_type'];
+        $exportType = $this->config[self::CONFIG_KEY_EXPORT_FORMAT];
         if ($format != null) {
             $exportType = $format;
         }
 
-        $createStatements = $this->dbDrv->dbGetCreateStatements($this->config['add_if_not_exists']);
+        $createStatements = $this->dbDrv->dbGetCreateStatements($this->config[self::CONFIG_KEY_AINE]);
 
         $ret = null;
 

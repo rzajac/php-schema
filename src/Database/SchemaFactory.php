@@ -15,11 +15,12 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\SchemaDump\Database;
+namespace Kicaj\Schema\Database;
 
-use Kicaj\SchemaDump\Database\Driver\MySQL;
-use Kicaj\SchemaDump\SchemaException;
-use Kicaj\SchemaDump\SchemaGetter;
+use Kicaj\Schema\Database\Driver\MySQL;
+use Kicaj\Schema\Schema;
+use Kicaj\Schema\SchemaException;
+use Kicaj\Schema\SchemaGetter;
 use Kicaj\Tools\Db\DatabaseException;
 use Kicaj\Tools\Db\DbConnect;
 use Kicaj\Tools\Db\DbConnector;
@@ -29,7 +30,7 @@ use Kicaj\Tools\Db\DbConnector;
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-final class SchemaDumpFactory
+final class SchemaFactory
 {
     /**
      * Instances.
@@ -61,16 +62,16 @@ final class SchemaDumpFactory
             return self::$instances[$key];
         }
 
-        switch (DbConnect::getDriver($dbConfig['connection'])) {
+        switch (DbConnect::getDriver($dbConfig[Schema::CONFIG_KEY_CONNECTION])) {
             case DbConnector::DB_DRIVER_MYSQL:
                 self::$instances[$key] = new MySQL();
                 break;
 
             default:
-                throw new SchemaException('unknown database driver name: ' . $dbConfig['connection']['driver']);
+                throw new SchemaException('unknown database driver name: ' . $dbConfig[Schema::CONFIG_KEY_CONNECTION][DbConnector::DB_CFG_DRIVER]);
         }
 
-        self::$instances[$key]->dbSetup($dbConfig['connection']);
+        self::$instances[$key]->dbSetup($dbConfig[Schema::CONFIG_KEY_CONNECTION]);
 
         if ($connect) {
             self::$instances[$key]->dbConnect();

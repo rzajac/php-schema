@@ -14,16 +14,17 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Database;
+namespace Kicaj\Test\Schema;
 
-use Kicaj\SchemaDump\ColumnDefinition;
-use Kicaj\SchemaDump\TableDefinition;
+use Kicaj\Schema\ColumnDefinition;
+use Kicaj\Schema\SchemaGetter;
+use Kicaj\Schema\TableDefinition;
 use Kicaj\Tools\Db\DbConnector;
 
 /**
  * TableDefinition_Test.
  * 
- * @coversDefaultClass \Kicaj\SchemaDump\TableDefinition
+ * @coversDefaultClass \Kicaj\Schema\TableDefinition
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
@@ -33,13 +34,40 @@ class TableDefinition_Test extends \PHPUnit_Framework_TestCase
      * @covers ::__construct
      * @covers ::make
      * @covers ::getName
+     * @covers ::getType
      */
-    public function test___construct()
+    public function test___construct_table()
     {
+        // When
         $td = TableDefinition::make('testTable');
 
-        $this->assertInstanceOf('\Kicaj\SchemaDump\TableDefinition', $td);
+        // Then
+        $this->assertInstanceOf('\Kicaj\Schema\TableDefinition', $td);
         $this->assertSame('testTable', $td->getName());
+        $this->assertSame(SchemaGetter::CREATE_TYPE_TABLE, $td->getType());
+
+        $td = TableDefinition::make('testView', SchemaGetter::CREATE_TYPE_VIEW);
+
+        $this->assertInstanceOf('\Kicaj\Schema\TableDefinition', $td);
+        $this->assertSame('testView', $td->getName());
+        $this->assertSame(SchemaGetter::CREATE_TYPE_VIEW, $td->getType());
+    }
+
+    /**
+     * @covers ::__construct
+     * @covers ::make
+     * @covers ::getName
+     * @covers ::getType
+     */
+    public function test___construct_view()
+    {
+        // When
+        $td = TableDefinition::make('testView', SchemaGetter::CREATE_TYPE_VIEW);
+
+        // Then
+        $this->assertInstanceOf('\Kicaj\Schema\TableDefinition', $td);
+        $this->assertSame('testView', $td->getName());
+        $this->assertSame(SchemaGetter::CREATE_TYPE_VIEW, $td->getType());
     }
 
     /**
@@ -48,14 +76,17 @@ class TableDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_addColumn()
     {
+        // Given
         $td = TableDefinition::make('testTable');
 
+        // When
         $col1 = new ColumnDefinition('col1', DbConnector::DB_DRIVER_MYSQL, 'testTable');
         $col2 = new ColumnDefinition('col2', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
         $td->addColumn($col1);
         $td->addColumn($col2);
 
+        // Then
         $gotColumns = $td->getColumns();
         $this->assertSame(2, count($gotColumns));
         $this->assertSame($col1, $gotColumns['col1']);
@@ -69,12 +100,12 @@ class TableDefinition_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_addIndex()
     {
-        // Indexes definition
+        // Given - Indexes definition
         $index1 = ['indexName1', 'PRIMARY', ['col1', 'col2']];
         $index2 = ['indexName2', 'UNIQUE', ['col3']];
         $index3 = ['indexName3', 'KEY', ['col4']];
 
-        // Columns for primary key
+        // When - Columns for primary key
         $col1 = new ColumnDefinition('col1', DbConnector::DB_DRIVER_MYSQL, 'testTable');
         $col2 = new ColumnDefinition('col2', DbConnector::DB_DRIVER_MYSQL, 'testTable');
 
@@ -86,6 +117,7 @@ class TableDefinition_Test extends \PHPUnit_Framework_TestCase
         $td->addIndex($index2);
         $td->addIndex($index3);
 
+        // Then
         $gotIndexes = $td->getIndexes();
         $this->assertSame(2, count($gotIndexes));
         $this->assertSame($index2, $gotIndexes[0]);

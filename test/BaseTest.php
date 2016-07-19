@@ -15,9 +15,9 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\SchemaDump;
+namespace Kicaj\Test\Schema;
 
-use Kicaj\SchemaDump\SchemaDump;
+use Kicaj\Schema\Schema;
 use Kicaj\Test\Helper\TestCase\DbTestCase;
 
 /**
@@ -28,20 +28,20 @@ use Kicaj\Test\Helper\TestCase\DbTestCase;
 abstract class BaseTest extends DbTestCase
 {
     /**
-     * Get schema dump config.
+     * Get schema export config.
      *
-     * @param string $testDbName The name of database connection details form phpunit.xml.
-     * @param string $exportType The schema export type.
+     * @param string $testDbName   The name of database connection details form phpunit.xml.
+     * @param string $exportFormat The schema export format.
      *
      * @return array
      */
-    public static function getDbConfig($testDbName, $exportType = SchemaDump::FORMAT_PHP_ARRAY)
+    public static function getSchemaConfig($testDbName, $exportFormat = Schema::FORMAT_PHP_ARRAY)
     {
         return [
-            'connection' => self::dbGetConfig($testDbName),
-            'export_type' => $exportType,
-            'add_if_not_exists' => false,
-            'output_file' => 'tmp/schema.php',
+            Schema::CONFIG_KEY_CONNECTION => self::dbGetConfig($testDbName),
+            Schema::CONFIG_KEY_EXPORT_FORMAT => $exportFormat,
+            Schema::CONFIG_KEY_AINE => false,
+            Schema::CONFIG_KEY_OUTPUT_FILE => 'tmp/schema.php',
         ];
     }
 }

@@ -15,7 +15,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\SchemaDump;
+namespace Kicaj\Schema;
 
 use Kicaj\Tools\Exception;
 

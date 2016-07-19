@@ -1,4 +1,4 @@
-## Class Kicaj\SchemaDump\SchemaException
+## Class Kicaj\Schema\SchemaException
 General database schema exception.
 
 ## Extends

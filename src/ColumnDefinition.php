@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\SchemaDump;
+namespace Kicaj\Schema;
 
 /**
  * Database column definition.
@@ -33,7 +33,7 @@ class ColumnDefinition
     /**
      * The php type for the column.
      *
-     * @var string One of the SchemaDump::PHP_TYPE_* constants
+     * @var string One of the Schema::PHP_TYPE_* constants
      */
     protected $phpType = '';
 
@@ -169,7 +169,7 @@ class ColumnDefinition
     /**
      * Return PHP type assigned to this column.
      *
-     * @return string One of the SchemaDump::PHP_TYPE_* constants
+     * @return string One of the Schema::PHP_TYPE_* constants
      */
     public function getPhpType()
     {
@@ -179,7 +179,7 @@ class ColumnDefinition
     /**
      * Set PHP type for this column.
      *
-     * @param string $phpType One of the SchemaDump::PHP_TYPE_* constants
+     * @param string $phpType One of the Schema::PHP_TYPE_* constants
      *
      * @return ColumnDefinition
      */
@@ -325,22 +325,22 @@ class ColumnDefinition
      */
     public function setDefaultValue($defaultValue)
     {
-        if ($defaultValue === null) {
-            $this->defaultValue = $defaultValue;
+        if ($defaultValue === null && $this->getPhpType() !== Schema::PHP_TYPE_BOOL) {
+            $this->defaultValue = null;
 
             return $this;
         }
 
         switch ($this->getPhpType()) {
-            case SchemaDump::PHP_TYPE_INT:
+            case Schema::PHP_TYPE_INT:
                 $this->defaultValue = (int) $defaultValue;
                 break;
 
-            case SchemaDump::PHP_TYPE_FLOAT:
+            case Schema::PHP_TYPE_FLOAT:
                 $this->defaultValue = (float) $defaultValue;
                 break;
 
-            case SchemaDump::PHP_TYPE_BOOL:
+            case Schema::PHP_TYPE_BOOL:
                 $this->defaultValue = (bool) $defaultValue;
                 break;
 

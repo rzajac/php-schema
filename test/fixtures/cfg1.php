@@ -1,14 +1,14 @@
 <?php
 
-use Kicaj\SchemaDump\SchemaDump;
+use Kicaj\Schema\Schema;
 use Kicaj\Tools\Db\DbConnect;
 use Kicaj\Tools\Db\DbConnector;
 
 $config = [
-        'connection' => DbConnect::getCfg(DbConnector::DB_DRIVER_MYSQL, '127.0.0.1', 'testUser', 'unitTestPass', 'test', '3306'),
-        'export_type' => SchemaDump::FORMAT_PHP_ARRAY,
-        'add_if_not_exists' => true,
-        'output_file' => 'schema.php',
+    Schema::CONFIG_KEY_CONNECTION => DbConnect::getCfg(DbConnector::DB_DRIVER_MYSQL, '127.0.0.1', 'testUser', 'unitTestPass', 'test', '3306'),
+    Schema::CONFIG_KEY_EXPORT_FORMAT => Schema::FORMAT_PHP_ARRAY,
+    Schema::CONFIG_KEY_AINE => true,
+    Schema::CONFIG_KEY_OUTPUT_FILE => 'schema.php',
 ];
 
 return $config;

@@ -1,22 +1,26 @@
-## Class Kicaj\SchemaDump\SchemaDump
-SchemaDump.
-Dumps MySQL database tables CREATE statements to a file.
+## Class Kicaj\Schema\Schema
+Schema.
+Exports MySQL database tables CREATE statements to a file.
 
-There are two dump modes:
- - as PHP array - creates includable PHP file with $createStatements
-   associative array where keys are table names and values are SQL CREATE statements.
+There are two export modes:
+ - as PHP array      - creates includable PHP file with $createStatements associative array
+                       where keys are table names and values are SQL CREATE statements.
  - as SQL statements - creates file with CREATE statements for all tables in given database.
 
-This tool not only dumps CREATE statements but rewrites it in following way:
+This tool not only exports CREATE statements but rewrites it in following way:
  - resets AUTO_INCREMENT to 1
  - adds CREATE TABLE IF NOT EXISTS (configurable)
  - adds DROP TABLE IF EXISTS (configurable)
 ## Constants
 
 ```php
-const FORMAT_PHP_FILE = 'phpFile';
-const FORMAT_PHP_ARRAY = 'phpArray';
+const FORMAT_PHP_FILE = 'php_file';
+const FORMAT_PHP_ARRAY = 'php_array';
 const FORMAT_SQL = 'sql';
+const CONFIG_KEY_CONNECTION = 'connection';
+const CONFIG_KEY_EXPORT_FORMAT = 'export_format';
+const CONFIG_KEY_AINE = 'add_if_not_exists';
+const CONFIG_KEY_OUTPUT_FILE = 'output_file';
 const PHP_TYPE_INT = 'int';
 const PHP_TYPE_STRING = 'string';
 const PHP_TYPE_FLOAT = 'float';
@@ -48,7 +52,7 @@ const COLUMN_AUTOINCREMENT = 'autoincrement';
 -------
 
 #### $config
-Schema dump configuration.
+Schema export configuration.
 
 ```php
 protected array $config
@@ -62,18 +66,26 @@ Constructor.
 public function __construct(array $dbConfig) : 
 ```
 Arguments:
-- _$dbConfig_ **array** - The database configuration
+- _$dbConfig_ **array** - The database configuration.
+
+Throws:
+- [Kicaj\Schema\SchemaException](Kicaj-Schema-SchemaException.md), 
+- Kicaj\Tools\Db\DatabaseException
 
 -------
 #### make
 Make.
 ```php
-public static function make(array $dbConfig) : Kicaj\SchemaDump\SchemaDump
+public static function make(array $dbConfig) : Kicaj\Schema\Schema
 ```
 Arguments:
 - _$dbConfig_ **array** - The database configuration
 
-Returns: **[Kicaj\SchemaDump\SchemaDump](Kicaj-SchemaDump-SchemaDump.md)**
+Throws:
+- [Kicaj\Schema\SchemaException](Kicaj-Schema-SchemaException.md), 
+- Kicaj\Tools\Db\DatabaseException
+
+Returns: **[Kicaj\Schema\Schema](Kicaj-Schema-Schema.md)**
 
 -------
 #### isValidFormat
@@ -104,7 +116,7 @@ name   - table name
 
 
 Throws:
-- [Kicaj\SchemaDump\SchemaException](Kicaj-SchemaDump-SchemaException.md)
+- [Kicaj\Schema\SchemaException](Kicaj-Schema-SchemaException.md)
 
 Returns: **array|string**
 

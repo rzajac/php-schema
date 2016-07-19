@@ -15,8 +15,9 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\SchemaDump;
+namespace Kicaj\Schema;
 
+use Kicaj\Tools\Db\DatabaseException;
 use Kicaj\Tools\Db\DbConnector;
 
 /**
@@ -32,8 +33,13 @@ interface SchemaGetter extends DbConnector
     /** View create statement */
     const CREATE_TYPE_VIEW = 'view';
 
+    /** Unknown sreate statement */
+    const CREATE_TYPE_NONE = '';
+
     /**
      * Get database table names.
+     *
+     * @throws DatabaseException
      *
      * @return string[] The table names
      */
@@ -43,10 +49,13 @@ interface SchemaGetter extends DbConnector
      * Get database table drop command.
      *
      * @param string $tableName The table name
+     * @param string $type      The table or view. Onr of the self:: CREATE_TYPE_* constants.
+     *
+     * @throws SchemaException
      *
      * @return string
      */
-    public function dbGetTableDropCommand($tableName);
+    public function dbGetTableDropCommand($tableName, $type);
 
     /**
      * Get create statement for the given table name.
@@ -60,6 +69,8 @@ interface SchemaGetter extends DbConnector
      * @param string $tableName      The table name to get CREATE statement for
      * @param bool   $addIfNotExists Set to true to add IF NOT EXIST to CREATE TABLE
      *
+     * @throws DatabaseException
+     *
      * @return array
      */
     public function dbGetCreateStatement($tableName, $addIfNotExists = false);
@@ -69,6 +80,8 @@ interface SchemaGetter extends DbConnector
      *
      * @param string $tableName The database table name
      *
+     * @throws DatabaseException
+     *
      * @return TableDefinition
      */
     public function dbGetTableDefinition($tableName);
@@ -77,6 +90,8 @@ interface SchemaGetter extends DbConnector
      * Get create statements for all database tables.
      *
      * @param bool $addIfNotExists Set to true to add IF NOT EXIST to CREATE TABLE
+     *
+     * @throws DatabaseException
      *
      * @return array See SchemaGetter::dbGetCreateStatement
      */

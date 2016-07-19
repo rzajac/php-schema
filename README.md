@@ -1,12 +1,12 @@
-## Database schema dumper
+## Database schema
 
-This command line and library helps dumping database schemas to a file.
+Library and command line tool for exporting and examining database schemas.
 
 ## Supported databases
 
 At the moment only MySQL is supported.
 
-## Export / dump modes:
+## Export modes:
 
 There are two export modes:
 
@@ -26,20 +26,20 @@ This tool also rewrites create statements it in following way:
 
 ## Installation
 
-Composer install:
+To use as a library add this to `composer.json`:
 
 ```json
 {
     "require": {
-        "rzajac/schemadump": "0.6.*"
+        "rzajac/schema": "0.6.*"
     }
 }
 ```
 
-Composer globally:
+To install as a command line tool:
 
 ```
-$ composer global require rzajac/schemadump
+$ composer global require rzajac/schema
 ```
 
 ## How to use
@@ -47,9 +47,9 @@ $ composer global require rzajac/schemadump
 Run:
 
 ```
-$ ./schemadump dump -h
+$ ./schema export -h
 Usage:
-  dump [options]
+  export [options]
 
 Options:
   -c, --config[=CONFIG]  The path to configuration JSON file. If not set it will search for db_config.json in current directory
@@ -62,7 +62,7 @@ Options:
   -v|vv|vvv, --verbose   Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
 
 Help:
- Dump database schema
+ Export database schema
 ```
 
 ## Configuration file
@@ -77,28 +77,28 @@ Help:
     "database": "test",
     "driver": "mysql"
   },
-  "export_type": "phpArray",
+  "export_type": "php_array",
   "add_if_not_exists": true,
   "output_file": "tmp/schema.php"
 }
 ```
 
-- **export_type** - export create statements as: _phpFile_, _phpArray_, _sql_.
+- **export_type** - export create statements as: _php_file_, _php_array_, _sql_.
 - **add_if_not_exists** - add IF NOT EXISTS to SQL create statements. 
 
-Database `connection` spec can be found [here](https://github.com/rzajac/phptools/blob/master/src/Db/DbConnect.php#L38)
+Database `connection` spec can be found [here](https://github.com/rzajac/phptools/blob/master/src/Db/DbConnect.php)
 
-## schemadump API
+## Library API
  
 ```php
 // Config in the same format as above
-$schemaDump = SchemaDumpFactory::make($dbConfig);
+$schema = SchemaFactory::make($dbConfig);
  
 // Get create statements
-$tableCreateStatement = $schemaDump->dbGetCreateStatement('tableName');
+$tableCreateStatement = $schema->dbGetCreateStatement('tableName');
  
 // Get see TableDefinition class
-$tableDefinition = $schemaDump->dbGetTableDefinition('tableName'); 
+$tableDefinition = $schema->dbGetTableDefinition('tableName'); 
 ```
 
 See [TableDefinition](src/TableDefinition.php) class.
@@ -122,8 +122,8 @@ look at my schema sync project [https://github.com/rzajac/dbupdate](https://gith
 ```sql
 CREATE USER 'testUser'@'localhost' IDENTIFIED BY 'testUserPass';
 
-CREATE DATABASE testSchemaDump DEFAULT CHARACTER SET = 'utf8';
-GRANT CREATE ROUTINE, CREATE VIEW, ALTER, SHOW VIEW, CREATE, ALTER ROUTINE, EVENT, INSERT, SELECT, DELETE, TRIGGER, GRANT OPTION, REFERENCES, UPDATE, DROP, EXECUTE, LOCK TABLES, CREATE TEMPORARY TABLES TO 'testUser'@'localhost';
+CREATE DATABASE testSchemaLib DEFAULT CHARACTER SET = 'utf8';
+GRANT CREATE ROUTINE, CREATE VIEW, ALTER, SHOW VIEW, CREATE, ALTER ROUTINE, EVENT, INSERT, SELECT, DELETE, TRIGGER, GRANT OPTION, REFERENCES, UPDATE, DROP, EXECUTE, LOCK TABLES, CREATE TEMPORARY TABLES, INDEX ON `testSchemaLib`.* TO 'testUser'@'localhost';
 ```
 
 ## License

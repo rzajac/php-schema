@@ -1,4 +1,4 @@
-## Class Kicaj\SchemaDump\ColumnDefinition
+## Class Kicaj\Schema\ColumnDefinition
 Database column definition.
 
 ## Methods
@@ -147,7 +147,7 @@ The one of DbConnector::DB_DRIVER_* constants.,
 #### make
 Make.
 ```php
-public static function make(string $columnName, string $driverName, string $tableName) : Kicaj\SchemaDump\ColumnDefinition
+public static function make(string $columnName, string $driverName, string $tableName) : Kicaj\Schema\ColumnDefinition
 ```
 Arguments:
 - _$columnName_ **string** - The column name, 
@@ -155,7 +155,7 @@ Arguments:
 The one of DbConnector::DB_DRIVER_* constants., 
 - _$tableName_ **string** - The table name column belongs to
 
-Returns: **[Kicaj\SchemaDump\ColumnDefinition](Kicaj-SchemaDump-ColumnDefinition.md)**
+Returns: **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
 
 -------
 #### getPhpType
@@ -164,18 +164,18 @@ Return PHP type assigned to this column.
 public function getPhpType() : string
 ```
 
-Returns: **string** - One of the SchemaDump::PHP_TYPE_* constants
+Returns: **string** - One of the Schema::PHP_TYPE_* constants
 
 -------
 #### setPhpType
 Set PHP type for this column.
 ```php
-public function setPhpType(string $phpType) : Kicaj\SchemaDump\ColumnDefinition
+public function setPhpType(string $phpType) : Kicaj\Schema\ColumnDefinition
 ```
 Arguments:
-- _$phpType_ **string** - One of the SchemaDump::PHP_TYPE_* constants
+- _$phpType_ **string** - One of the Schema::PHP_TYPE_* constants
 
-Returns: **[Kicaj\SchemaDump\ColumnDefinition](Kicaj-SchemaDump-ColumnDefinition.md)**
+Returns: **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
 
 -------
 #### isUnsigned
@@ -190,12 +190,12 @@ Returns: **boolean**
 #### setIsUnsigned
 Set column as signed or unsigned.
 ```php
-public function setIsUnsigned(boolean $isUnsigned) : Kicaj\SchemaDump\ColumnDefinition
+public function setIsUnsigned(boolean $isUnsigned) : Kicaj\Schema\ColumnDefinition
 ```
 Arguments:
 - _$isUnsigned_ **boolean**
 
-Returns: **[Kicaj\SchemaDump\ColumnDefinition](Kicaj-SchemaDump-ColumnDefinition.md)**
+Returns: **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
 
 -------
 #### isNotNull
@@ -210,12 +210,12 @@ Returns: **boolean**
 #### setNotNull
 Set if null is allowed for the column.
 ```php
-public function setNotNull(boolean $notNull) : Kicaj\SchemaDump\ColumnDefinition
+public function setNotNull(boolean $notNull) : Kicaj\Schema\ColumnDefinition
 ```
 Arguments:
 - _$notNull_ **boolean**
 
-Returns: **[Kicaj\SchemaDump\ColumnDefinition](Kicaj-SchemaDump-ColumnDefinition.md)**
+Returns: **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
 
 -------
 #### isAutoincrement
@@ -230,12 +230,12 @@ Returns: **boolean**
 #### setIsAutoincrement
 Set column as autoincrement or not.
 ```php
-public function setIsAutoincrement(boolean $isAutoincrement) : Kicaj\SchemaDump\ColumnDefinition
+public function setIsAutoincrement(boolean $isAutoincrement) : Kicaj\Schema\ColumnDefinition
 ```
 Arguments:
 - _$isAutoincrement_ **boolean**
 
-Returns: **[Kicaj\SchemaDump\ColumnDefinition](Kicaj-SchemaDump-ColumnDefinition.md)**
+Returns: **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
 
 -------
 #### isPartOfPk
@@ -250,12 +250,12 @@ Returns: **boolean**
 #### setIsPartOfPk
 Set column as being part of primary key for the table.
 ```php
-public function setIsPartOfPk(boolean $isPartOfPk) : Kicaj\SchemaDump\ColumnDefinition
+public function setIsPartOfPk(boolean $isPartOfPk) : Kicaj\Schema\ColumnDefinition
 ```
 Arguments:
 - _$isPartOfPk_ **boolean**
 
-Returns: **[Kicaj\SchemaDump\ColumnDefinition](Kicaj-SchemaDump-ColumnDefinition.md)**
+Returns: **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
 
 -------
 #### getName
@@ -288,12 +288,12 @@ Returns: **mixed** - Returns null when not set.
 #### setDefaultValue
 Set default value for column.
 ```php
-public function setDefaultValue(mixed $defaultValue) : Kicaj\SchemaDump\ColumnDefinition
+public function setDefaultValue(mixed $defaultValue) : Kicaj\Schema\ColumnDefinition
 ```
 Arguments:
 - _$defaultValue_ **mixed**
 
-Returns: **[Kicaj\SchemaDump\ColumnDefinition](Kicaj-SchemaDump-ColumnDefinition.md)**
+Returns: **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
 
 -------
 #### getMinValue
@@ -308,12 +308,12 @@ Returns: **float|integer** - Returns null is not set
 #### setMinValue
 Set minimum value the column may have.
 ```php
-public function setMinValue(float|integer $minValue) : Kicaj\SchemaDump\ColumnDefinition
+public function setMinValue(float|integer $minValue) : Kicaj\Schema\ColumnDefinition
 ```
 Arguments:
 - _$minValue_ **float|integer** - Set to null to unset
 
-Returns: **[Kicaj\SchemaDump\ColumnDefinition](Kicaj-SchemaDump-ColumnDefinition.md)**
+Returns: **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
 
 -------
 #### getMaxValue
@@ -328,12 +328,12 @@ Returns: **float|integer**
 #### setMaxValue
 Set maximum value the column may have.
 ```php
-public function setMaxValue(float|integer $maxValue) : Kicaj\SchemaDump\ColumnDefinition
+public function setMaxValue(float|integer $maxValue) : Kicaj\Schema\ColumnDefinition
 ```
 Arguments:
 - _$maxValue_ **float|integer** - Set to null to unset
 
-Returns: **[Kicaj\SchemaDump\ColumnDefinition](Kicaj-SchemaDump-ColumnDefinition.md)**
+Returns: **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
 
 -------
 #### getMinLength
@@ -352,12 +352,12 @@ Set minimum length for column value.
 
 This has meaning only for string types.
 ```php
-public function setMinLength(integer $minLength) : Kicaj\SchemaDump\ColumnDefinition
+public function setMinLength(integer $minLength) : Kicaj\Schema\ColumnDefinition
 ```
 Arguments:
 - _$minLength_ **integer**
 
-Returns: **[Kicaj\SchemaDump\ColumnDefinition](Kicaj-SchemaDump-ColumnDefinition.md)**
+Returns: **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
 
 -------
 #### getMaxLength
@@ -376,12 +376,12 @@ Set maximum length for column value.
 
 This has meaning only for string types.
 ```php
-public function setMaxLength(integer $maxLength) : Kicaj\SchemaDump\ColumnDefinition
+public function setMaxLength(integer $maxLength) : Kicaj\Schema\ColumnDefinition
 ```
 Arguments:
 - _$maxLength_ **integer**
 
-Returns: **[Kicaj\SchemaDump\ColumnDefinition](Kicaj-SchemaDump-ColumnDefinition.md)**
+Returns: **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
 
 -------
 #### getDriverName
@@ -405,12 +405,12 @@ Returns: **string**
 #### setDbType
 Set database type of this column.
 ```php
-public function setDbType(string $dbType) : Kicaj\SchemaDump\ColumnDefinition
+public function setDbType(string $dbType) : Kicaj\Schema\ColumnDefinition
 ```
 Arguments:
 - _$dbType_ **string**
 
-Returns: **[Kicaj\SchemaDump\ColumnDefinition](Kicaj-SchemaDump-ColumnDefinition.md)**
+Returns: **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
 
 -------
 #### getValidValues
@@ -425,11 +425,11 @@ Returns: **array|null** - Returns null if not applicable
 #### setValidValues
 Set valid values for the column.
 ```php
-public function setValidValues(array $validValues) : Kicaj\SchemaDump\ColumnDefinition
+public function setValidValues(array $validValues) : Kicaj\Schema\ColumnDefinition
 ```
 Arguments:
 - _$validValues_ **array**
 
-Returns: **[Kicaj\SchemaDump\ColumnDefinition](Kicaj-SchemaDump-ColumnDefinition.md)**
+Returns: **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
 
 -------

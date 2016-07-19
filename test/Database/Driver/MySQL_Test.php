@@ -15,18 +15,20 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\SchemaDump\Database\Driver;
+namespace Kicaj\Test\Schema\Database\Driver;
 
-use Kicaj\SchemaDump\Database\Driver\MySQL;
-use Kicaj\Test\SchemaDump\BaseTest;
+use Kicaj\Schema\Database\Driver\MySQL;
+use Kicaj\Schema\SchemaGetter;
+use Kicaj\Test\Schema\BaseTest;
 use Kicaj\Tools\Db\DatabaseException;
 use Kicaj\Tools\Db\DbConnector;
 use Kicaj\Tools\Helper\Str;
+use Mockery\Mock;
 
 /**
  * Tests for MySQL driver.
  *
- * @coversDefaultClass \Kicaj\SchemaDump\Database\Driver\MySQL
+ * @coversDefaultClass \Kicaj\Schema\Database\Driver\MySQL
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
@@ -42,7 +44,7 @@ class MySQL_Test extends BaseTest
     public function setUp()
     {
         $this->driver = new MySQL();
-        $this->driver->dbSetup(self::dbGetConfig('SCHEMA_DUMP1'))->dbConnect();
+        $this->driver->dbSetup(self::dbGetConfig('SCHEMA1'))->dbConnect();
     }
 
     /**
@@ -56,10 +58,11 @@ class MySQL_Test extends BaseTest
      * @param string $password
      * @param string $database
      * @param string $port
-     * @param bool   $connect
      * @param string $expMsg
+     *
+     * @internal     param bool $connect
      */
-    public function test_connection($host, $username, $password, $database, $port, $connect, $expMsg)
+    public function test_connection($host, $username, $password, $database, $port, $expMsg)
     {
         $this->driver = null;
 
@@ -95,21 +98,19 @@ class MySQL_Test extends BaseTest
     {
         return [
             [
-                $GLOBALS['TEST_DB_SCHEMA_DUMP1_HOST'],
-                $GLOBALS['TEST_DB_SCHEMA_DUMP1_USERNAME'],
-                $GLOBALS['TEST_DB_SCHEMA_DUMP1_PASSWORD'],
-                $GLOBALS['TEST_DB_SCHEMA_DUMP1_DATABASE'],
+                $GLOBALS['TEST_DB_SCHEMA1_HOST'],
+                $GLOBALS['TEST_DB_SCHEMA1_USERNAME'],
+                $GLOBALS['TEST_DB_SCHEMA1_PASSWORD'],
+                $GLOBALS['TEST_DB_SCHEMA1_DATABASE'],
                 3306,
-                true,
                 '',
             ],
             [
-                $GLOBALS['TEST_DB_SCHEMA_DUMP1_HOST'],
-                $GLOBALS['TEST_DB_SCHEMA_DUMP1_USERNAME'],
-                $GLOBALS['TEST_DB_SCHEMA_DUMP1_PASSWORD'],
+                $GLOBALS['TEST_DB_SCHEMA1_HOST'],
+                $GLOBALS['TEST_DB_SCHEMA1_USERNAME'],
+                $GLOBALS['TEST_DB_SCHEMA1_PASSWORD'],
                 'not_existing',
                 3306,
-                false,
                 "'not_existing'",
             ],
         ];
@@ -120,8 +121,10 @@ class MySQL_Test extends BaseTest
      */
     public function test_getDbTableNames()
     {
+        // When
         $tableNames = $this->driver->dbGetTableNames();
 
+        // Then
         $this->assertSame(['bigtable'], $tableNames);
     }
 
@@ -130,12 +133,15 @@ class MySQL_Test extends BaseTest
      */
     public function test_getDbCreateStatement()
     {
-        self::dbDropTables('SCHEMA_DUMP1', 'bigtable');
-        self::dbLoadFixtures('SCHEMA_DUMP1', 'bigtable_create.sql');
+        // Given
+        self::dbDropTables('SCHEMA1', 'bigtable');
+        self::dbLoadFixtures('SCHEMA1', 'bigtable_create.sql');
 
+        // When
         $expCreate = self::getFixtureData('bigtable_create.sql');
         $gotCreate = $this->driver->dbGetCreateStatement('bigtable');
 
+        // Then
         $this->assertSame(2, count($expCreate));
         $expCreate = $expCreate[1]; // Get create statement only
 
@@ -156,11 +162,16 @@ class MySQL_Test extends BaseTest
 
     /**
      * @covers ::dbGetCreateStatement
-     * @covers ::getRowsArray
+     *
+     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedExceptionMessage doesn't exist
      */
     public function test_getDbCreateStatement_err()
     {
+        // When
         $gotCreate = $this->driver->dbGetCreateStatement('notExisting');
+
+        // Then
         $this->assertSame([], $gotCreate);
     }
 
@@ -170,12 +181,15 @@ class MySQL_Test extends BaseTest
      */
     public function test_getDbCreateStatement_ifNotExist()
     {
-        self::dbDropTables('SCHEMA_DUMP1', 'bigtable');
-        self::dbLoadFixtures('SCHEMA_DUMP1', 'bigtable_create.sql');
+        // Given
+        self::dbDropTables('SCHEMA1', 'bigtable');
+        self::dbLoadFixtures('SCHEMA1', 'bigtable_create.sql');
 
+        // When
         $gotCreate = $this->driver->dbGetCreateStatement('bigtable', true);
         $gotCreate['create'] = Str::oneLine($gotCreate['create']);
 
+        // Then
         $this->assertContains('IF NOT EXISTS ', $gotCreate['create']);
     }
 
@@ -184,29 +198,144 @@ class MySQL_Test extends BaseTest
      */
     public function test_getDbCreateStatements()
     {
-        self::dbDropAllTables('SCHEMA_DUMP1');
-        self::dbLoadFixtures('SCHEMA_DUMP1', ['bigtable_create.sql', 'test1.sql']);
+        // Given
+        self::dbDropAllTables('SCHEMA1');
+        self::dbLoadFixtures('SCHEMA1', ['bigtable_create.sql', 'test1.sql']);
 
+        // When
         $gotCreates = $this->driver->dbGetCreateStatements();
 
+        // Then
         $this->assertSame(2, count(array_keys($gotCreates)));
         $this->assertArrayHasKey('bigtable', $gotCreates);
         $this->assertArrayHasKey('test1', $gotCreates);
     }
 
     /**
-     * @covers ::parseIndex
      * @covers ::dbGetCreateStatements
+     * @covers ::fixCreateStatement
+     * @covers ::getRowsArray
      */
     public function test_getDbCreateStatements_indexes()
     {
-        self::dbDropAllTables('SCHEMA_DUMP1');
-        self::dbLoadFixtures('SCHEMA_DUMP1', ['bigtable_create.sql', 'test1.sql']);
+        // Given
+        self::dbDropAllTables('SCHEMA1');
+        self::dbLoadFixtures('SCHEMA1', ['bigtable_create.sql', 'test1.sql', 'view.sql']);
 
+        // When
         $tableDef = $this->driver->dbGetTableDefinition('bigtable');
 
+        // Then
+        $this->assertSame(SchemaGetter::CREATE_TYPE_TABLE, $tableDef->getType());
         $this->assertSame(4, count($tableDef->getIndexes()));
         $this->assertNotEmpty($tableDef->getPrimaryKey());
+    }
+
+    /**
+     * @covers ::dbGetCreateStatement
+     * @covers ::fixCreateStatement
+     * @covers ::getRowsArray
+     */
+    public function test_getDbCreateStatements_view()
+    {
+        // Given
+        self::dbDropAllTables('SCHEMA1');
+        self::dbLoadFixtures('SCHEMA1', ['test1.sql', 'view.sql']);
+
+        // When
+        $arr = $this->driver->dbGetCreateStatement('myview', true);
+
+        // Then
+        $this->assertSame(SchemaGetter::CREATE_TYPE_VIEW, $arr['type']);
+        $this->assertSame('myview', $arr['name']);
+        $this->assertSame('DROP VIEW IF EXISTS `myview`;', $arr['drop']);
+    }
+
+    /**
+     * @covers ::dbGetCreateStatement
+     */
+    public function test_getDbCreateStatements_empty_getRowsArray()
+    {
+        // Given
+        self::dbDropAllTables('SCHEMA1');
+        self::dbLoadFixtures('SCHEMA1', ['test1.sql', 'view.sql']);
+
+        /** @var MySQL|Mock $mock */
+        $mock = \Mockery::mock('\Kicaj\Schema\Database\Driver\MySQL')->makePartial();
+        $mock->shouldReceive('getRowsArray')->times(1)->andReturn([[]]);
+        $mock->dbSetup(self::dbGetConfig('SCHEMA1'))->dbConnect();
+
+        // When
+        $arr = $mock->dbGetCreateStatement('myview', true);
+
+        // Then
+        $this->assertSame('', $arr['create']);
+        $this->assertSame('', $arr['drop']);
+        $this->assertSame(SchemaGetter::CREATE_TYPE_NONE, $arr['type']);
+        $this->assertSame('', $arr['name']);
+    }
+
+    /**
+     * @covers ::dbGetCreateStatement
+     */
+    public function test_getDbCreateStatements_unknownType()
+    {
+        // Given
+        self::dbDropAllTables('SCHEMA1');
+        self::dbLoadFixtures('SCHEMA1', ['test1.sql', 'view.sql']);
+
+        // When
+        /** @var MySQL|Mock $mock */
+        $mock = \Mockery::mock('\Kicaj\Schema\Database\Driver\MySQL')->makePartial();
+        $mock->shouldReceive('getRowsArray')->times(1)->andReturn([['Unknown Create' => '']]);
+        $mock->dbSetup(self::dbGetConfig('SCHEMA1'))->dbConnect();
+
+        $arr = $mock->dbGetCreateStatement('myview', true);
+
+        // Then
+        $this->assertSame('', $arr['create']);
+        $this->assertSame('', $arr['drop']);
+        $this->assertSame(SchemaGetter::CREATE_TYPE_NONE, $arr['type']);
+        $this->assertSame('', $arr['name']);
+    }
+
+    /**
+     * @dataProvider parseIndexProvider
+     *
+     * @covers ::parseIndex
+     *
+     * @param string   $keyDef
+     * @param string   $name
+     * @param string   $type
+     * @param string[] $colNames
+     */
+    public function test_parseIndex($keyDef, $name, $type, $colNames)
+    {
+        // When
+        $got = MySQL::parseIndex($keyDef);
+
+        // Then
+        $this->assertSame($name, $got[0]);
+        $this->assertSame($type, $got[1]);
+        $this->assertSame($colNames, $got[2]);
+    }
+
+    public function parseIndexProvider()
+    {
+        return [
+            ['PRIMARY KEY (`id`)', '', 'PRIMARY', ['id']],
+        ];
+    }
+
+    /**
+     * @covers ::parseIndex
+     *
+     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedExceptionMessage cannot parse table index: wrong format
+     */
+    public function test_parseIndex_error()
+    {
+        MySQL::parseIndex('wrong format');
     }
 
     /**
@@ -214,10 +343,36 @@ class MySQL_Test extends BaseTest
      */
     public function test_getDbTableDropCommand()
     {
+        // When
         $exp = 'DROP TABLE IF EXISTS `tableX`;';
-        $got = $this->driver->dbGetTableDropCommand('tableX');
+        $got = $this->driver->dbGetTableDropCommand('tableX', SchemaGetter::CREATE_TYPE_TABLE);
 
+        // Then
         $this->assertSame($exp, $got);
+    }
+
+    /**
+     * @covers ::dbGetTableDropCommand
+     */
+    public function test_getDbTableDropCommand_view()
+    {
+        // When
+        $exp = 'DROP VIEW IF EXISTS `viewX`;';
+        $got = $this->driver->dbGetTableDropCommand('viewX', SchemaGetter::CREATE_TYPE_VIEW);
+
+        // Then
+        $this->assertSame($exp, $got);
+    }
+
+    /**
+     * @covers ::dbGetTableDropCommand
+     *
+     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedExceptionMessage Unknown table type: not_existing_type
+     */
+    public function test_getDbTableDropCommand_error()
+    {
+        $this->driver->dbGetTableDropCommand('tableX', 'not_existing_type');
     }
 
     /**
@@ -230,5 +385,39 @@ class MySQL_Test extends BaseTest
 
         $closed = $this->driver->dbClose();
         $this->assertTrue($closed);
+    }
+
+    /**
+     * @covers ::runQuery
+     *
+     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     */
+    public function test_runQuery_error()
+    {
+        $this->driver->runQuery('NOT SQL');
+    }
+
+    /**
+     * @covers ::runQuery
+     */
+    public function test_test_runQuery()
+    {
+        // When
+        $result = $this->driver->runQuery('SELECT NOW();');
+
+        // Then
+        $this->assertInstanceOf('\mysqli_result', $result);
+    }
+
+    /**
+     * @covers ::getRowsArray
+     */
+    public function test_getRowsArray()
+    {
+        // When
+        $got = $this->driver->getRowsArray(false);
+
+        // Then
+        $this->assertSame([], $got);
     }
 }

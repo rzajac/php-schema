@@ -16,15 +16,15 @@
  */
 namespace Database\Driver;
 
-use Kicaj\SchemaDump\Database\SchemaDumpFactory;
-use Kicaj\SchemaDump\SchemaGetter;
+use Kicaj\Schema\Database\SchemaFactory;
+use Kicaj\Schema\SchemaGetter;
 use Kicaj\Test\Helper\Database\DbItf;
-use Kicaj\Test\SchemaDump\BaseTest;
+use Kicaj\Test\Schema\BaseTest;
 
 /**
  * MYSQL_CreateTable_Test.
  *
- * @coversDefaultClass \Kicaj\SchemaDump\Database\Driver\MySQL
+ * @coversDefaultClass \Kicaj\Schema\Database\Driver\MySQL
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
@@ -44,16 +44,16 @@ class MySQL_CreateTable_Test extends BaseTest
 
     public static function setUpBeforeClass()
     {
-        self::dbDropAllTables('SCHEMA_DUMP1');
-        self::dbLoadFixtures('SCHEMA_DUMP1', 'bigtable_create.sql');
+        self::dbDropAllTables('SCHEMA1');
+        self::dbLoadFixtures('SCHEMA1', 'bigtable_create.sql');
     }
 
     public function setUp()
     {
         parent::setUp();
 
-        $dbConfig = self::getDbConfig('SCHEMA_DUMP1');
-        $this->schema = SchemaDumpFactory::factory($dbConfig);
+        $dbConfig = self::getSchemaConfig('SCHEMA1');
+        $this->schema = SchemaFactory::factory($dbConfig);
     }
 
     /**
@@ -61,9 +61,11 @@ class MySQL_CreateTable_Test extends BaseTest
      */
     public function test_dbTableDefinition()
     {
+        // When
         $tableDef = $this->schema->dbGetTableDefinition('bigtable');
 
-        $this->assertInstanceOf('\Kicaj\SchemaDump\TableDefinition', $tableDef);
+        // Then
+        $this->assertInstanceOf('\Kicaj\Schema\TableDefinition', $tableDef);
         $this->assertSame('bigtable', $tableDef->getName());
     }
 
@@ -72,9 +74,11 @@ class MySQL_CreateTable_Test extends BaseTest
      */
     public function test_dbGetTableDefinition_columnNames()
     {
+        // When
         $tableDef = $this->schema->dbGetTableDefinition('bigtable');
         $columnDefinitions = $tableDef->getColumns();
 
+        // Then
         $this->assertArrayHasKey('id', $columnDefinitions);
         $this->assertArrayHasKey('bt_id', $columnDefinitions);
         $this->assertArrayHasKey('chr', $columnDefinitions);
@@ -113,10 +117,8 @@ class MySQL_CreateTable_Test extends BaseTest
      */
     public function test_dbGetTableDefinition_indexes()
     {
+        // When
         $tableDef = $this->schema->dbGetTableDefinition('bigtable');
-
-        $this->assertSame(['', 'PRIMARY', ['id', 'bt_id']], $tableDef->getPrimaryKey());
-
         $expected = [
             0 => [
                 0 => 'u',
@@ -140,14 +142,16 @@ class MySQL_CreateTable_Test extends BaseTest
             ],
         ];
 
+        // Then
+        $this->assertSame(['', 'PRIMARY', ['id', 'bt_id']], $tableDef->getPrimaryKey());
         $this->assertSame($expected, $tableDef->getIndexes());
     }
 
     /**
      * @covers ::dbGetTableDefinition
      *
-     * @expectedException \Kicaj\SchemaDump\SchemaException
-     * @expectedExceptionMessage no database table: not_existing
+     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedExceptionMessage doesn't exist
      */
     public function test_dbGetTableDefinition_error()
     {

@@ -2,9 +2,9 @@
   "tmp": "tmp",
   "doc": "docs",
   "src": "src",
-  "project_name": "SchemaDump",
+  "project_name": "Schema",
   "exclude": [
-    "Kicaj\\SchemaDump\\Database\\Driver\\MySQL",
-    "Kicaj\\SchemaDump\\DumpCommand"
+    "Kicaj\\Schema\\Database\\Driver\\MySQL",
+    "Kicaj\\Schema\\ExportCommand"
   ]
 }

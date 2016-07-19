@@ -15,13 +15,13 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\SchemaDump\Database\Driver;
+namespace Kicaj\Schema\Database\Driver;
 
-use Kicaj\SchemaDump\ColumnDefinition;
-use Kicaj\SchemaDump\SchemaDump;
-use Kicaj\SchemaDump\SchemaException;
-use Kicaj\SchemaDump\SchemaGetter;
-use Kicaj\SchemaDump\TableDefinition;
+use Kicaj\Schema\ColumnDefinition;
+use Kicaj\Schema\Schema;
+use Kicaj\Schema\SchemaException;
+use Kicaj\Schema\SchemaGetter;
+use Kicaj\Schema\TableDefinition;
 use Kicaj\Tools\Db\DatabaseException;
 use Kicaj\Tools\Db\DbConnector;
 use Kicaj\Tools\Traits\Error;
@@ -132,17 +132,6 @@ class MySQL implements SchemaGetter
         return $this;
     }
 
-    public function useDatabase($dbName)
-    {
-        if (!$this->mysqli->select_db($dbName)) {
-            throw new DatabaseException($this->mysqli->error);
-        }
-
-        $this->dbName = $dbName;
-
-        return $this;
-    }
-
     public function dbClose()
     {
         if ($this->mysqli) {
@@ -157,11 +146,7 @@ class MySQL implements SchemaGetter
 
     public function dbGetTableNames()
     {
-        $sql = sprintf('SHOW TABLES FROM `%s`', $this->dbName);
-        $result = $this->mysqli->query($sql);
-        if (!$result) {
-            throw new DatabaseException($this->mysqli->error);
-        }
+        $result = $this->runQuery(sprintf('SHOW TABLES FROM `%s`', $this->dbName));
 
         $ret = [];
         while ($row = $result->fetch_assoc()) {
@@ -175,30 +160,37 @@ class MySQL implements SchemaGetter
 
     public function dbGetCreateStatement($tableName, $addIfNotExists = false)
     {
-        $result = $this->mysqli->query('SHOW CREATE TABLE ' . $tableName);
+        $result = $this->runQuery('SHOW CREATE TABLE ' . $tableName);
         $createStatementResp = $this->getRowsArray($result);
 
         $createStatement = array_pop($createStatementResp);
 
-        if (!is_array($createStatement)) {
-            return [];
+        $ret = [
+            'create' => '',
+            'drop'   => '',
+            'type'   => SchemaGetter::CREATE_TYPE_NONE,
+            'name'   => '',
+        ];
+
+        // Defensive programming.
+        if (!is_array($createStatement) || empty($createStatement)) {
+            return $ret;
         }
 
         // We can get either table or view
         if (array_key_exists('Create Table', $createStatement)) {
-            $type = self::CREATE_TYPE_TABLE;
+            $type = SchemaGetter::CREATE_TYPE_TABLE;
             $key = 'Create Table';
         } elseif (array_key_exists('Create View', $createStatement)) {
-            $type = self::CREATE_TYPE_VIEW;
+            $type = SchemaGetter::CREATE_TYPE_VIEW;
             $key = 'Create View';
         } else {
-            // Error
-            return [];
+            return $ret;
         }
 
         $ret = [
             'create' => $createStatement[$key],
-            'drop'   => $this->dbGetTableDropCommand($tableName),
+            'drop'   => $this->dbGetTableDropCommand($tableName, $type),
             'type'   => $type,
             'name'   => $tableName,
         ];
@@ -222,25 +214,29 @@ class MySQL implements SchemaGetter
         return $createStatements;
     }
 
-    public function dbGetTableDropCommand($tableName)
+    public function dbGetTableDropCommand($tableName, $type)
     {
-        return 'DROP TABLE IF EXISTS `' . $tableName . '`;';
+        switch ($type) {
+            case SchemaGetter::CREATE_TYPE_TABLE:
+                return 'DROP TABLE IF EXISTS `' . $tableName . '`;';
+
+            case SchemaGetter::CREATE_TYPE_VIEW:
+                return 'DROP VIEW IF EXISTS `' . $tableName . '`;';
+
+            default:
+                throw new SchemaException('Unknown table type: ' . $type);
+        }
     }
 
     public function dbGetTableDefinition($tableName)
     {
         $create = $this->dbGetCreateStatement($tableName);
-
-        if (empty($create)) {
-            throw new SchemaException('no database table: ' . $tableName);
-        }
-
         $lines = explode("\n", $create['create']);
 
         // Remove CREATE TABLE line
         array_shift($lines);
 
-        $tableDef = new TableDefinition($tableName);
+        $tableDef = new TableDefinition($tableName, $create['type']);
 
         foreach ($lines as $line) {
             $line = trim($line);
@@ -401,7 +397,6 @@ class MySQL implements SchemaGetter
             case self::TYPE_DECIMAL:
             case self::TYPE_YEAR:
                 return;
-                break;
         }
 
         preg_match('/.*\((.*)\).*/', $typeDef, $matches);
@@ -441,7 +436,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_TINYINT) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_INT)
+                ->setPhpType(Schema::PHP_TYPE_INT)
                 ->setDbType(self::TYPE_TINYINT);
 
             return;
@@ -449,7 +444,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_MEDIUMINT) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_INT)
+                ->setPhpType(Schema::PHP_TYPE_INT)
                 ->setDbType(self::TYPE_MEDIUMINT);
 
             return;
@@ -457,7 +452,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_SMALLINT) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_INT)
+                ->setPhpType(Schema::PHP_TYPE_INT)
                 ->setDbType(self::TYPE_SMALLINT);
 
             return;
@@ -465,7 +460,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_BIGINT) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_INT)
+                ->setPhpType(Schema::PHP_TYPE_INT)
                 ->setDbType(self::TYPE_BIGINT);
 
             return;
@@ -473,7 +468,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_INT) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_INT)
+                ->setPhpType(Schema::PHP_TYPE_INT)
                 ->setDbType(self::TYPE_INT);
 
             return;
@@ -481,7 +476,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_DECIMAL) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_INT)
+                ->setPhpType(Schema::PHP_TYPE_INT)
                 ->setDbType(self::TYPE_DECIMAL);
 
             return;
@@ -491,7 +486,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_BIT) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_BINARY)
+                ->setPhpType(Schema::PHP_TYPE_BINARY)
                 ->setDbType(self::TYPE_BIT);
 
             return;
@@ -499,7 +494,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_BINARY) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_BINARY)
+                ->setPhpType(Schema::PHP_TYPE_BINARY)
                 ->setDbType(self::TYPE_BINARY);
 
             return;
@@ -507,7 +502,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_VARBINARY) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_BINARY)
+                ->setPhpType(Schema::PHP_TYPE_BINARY)
                 ->setDbType(self::TYPE_VARBINARY);
 
             return;
@@ -517,7 +512,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_VARCHAR) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_STRING)
+                ->setPhpType(Schema::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_VARCHAR);
 
             return;
@@ -525,7 +520,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_CHAR) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_STRING)
+                ->setPhpType(Schema::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_CHAR);
 
             return;
@@ -533,7 +528,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_TEXT) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_STRING)
+                ->setPhpType(Schema::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_TEXT);
 
             return;
@@ -541,7 +536,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_TINYTEXT) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_STRING)
+                ->setPhpType(Schema::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_TINYTEXT);
 
             return;
@@ -549,7 +544,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_LONGTEXT) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_STRING)
+                ->setPhpType(Schema::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_LONGTEXT);
 
             return;
@@ -557,7 +552,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_MEDIUMTEXT) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_STRING)
+                ->setPhpType(Schema::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_MEDIUMTEXT);
 
             return;
@@ -567,7 +562,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_TIMESTAMP) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_TIMESTAMP)
+                ->setPhpType(Schema::PHP_TYPE_TIMESTAMP)
                 ->setDbType(self::TYPE_TIMESTAMP);
 
             return;
@@ -575,7 +570,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_TIME) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_TIME)
+                ->setPhpType(Schema::PHP_TYPE_TIME)
                 ->setDbType(self::TYPE_TIME);
 
             return;
@@ -583,7 +578,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_DATETIME) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_DATETIME)
+                ->setPhpType(Schema::PHP_TYPE_DATETIME)
                 ->setDbType(self::TYPE_DATETIME);
 
             return;
@@ -591,7 +586,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_DATE) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_DATE)
+                ->setPhpType(Schema::PHP_TYPE_DATE)
                 ->setDbType(self::TYPE_DATE);
 
             return;
@@ -599,7 +594,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_YEAR) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_YEAR)
+                ->setPhpType(Schema::PHP_TYPE_YEAR)
                 ->setDbType(self::TYPE_YEAR);
 
             return;
@@ -609,7 +604,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_MEDIUMBLOB) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_STRING)
+                ->setPhpType(Schema::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_MEDIUMBLOB);
 
             return;
@@ -617,7 +612,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_TINYBLOB) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_STRING)
+                ->setPhpType(Schema::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_TINYBLOB);
 
             return;
@@ -625,7 +620,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_LONGBLOB) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_STRING)
+                ->setPhpType(Schema::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_LONGBLOB);
 
             return;
@@ -633,7 +628,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_BLOB) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_STRING)
+                ->setPhpType(Schema::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_BLOB);
 
             return;
@@ -643,7 +638,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_FLOAT) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_FLOAT)
+                ->setPhpType(Schema::PHP_TYPE_FLOAT)
                 ->setDbType(self::TYPE_FLOAT);
 
             return;
@@ -651,7 +646,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_DOUBLE) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_FLOAT)
+                ->setPhpType(Schema::PHP_TYPE_FLOAT)
                 ->setDbType(self::TYPE_DOUBLE);
 
             return;
@@ -661,7 +656,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_ENUM) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_STRING)
+                ->setPhpType(Schema::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_ENUM);
 
             return;
@@ -669,7 +664,7 @@ class MySQL implements SchemaGetter
 
         if (strpos($mysqlDef, self::TYPE_SET) === 0) {
             $colDef
-                ->setPhpType(SchemaDump::PHP_TYPE_STRING)
+                ->setPhpType(Schema::PHP_TYPE_STRING)
                 ->setDbType(self::TYPE_SET);
 
             return;
@@ -802,6 +797,25 @@ class MySQL implements SchemaGetter
     }
 
     /**
+     * Run SQL query.
+     *
+     * @param string $sql The SQL query.
+     *
+     * @throws DatabaseException
+     *
+     * @return bool|\mysqli_result
+     */
+    public function runQuery($sql)
+    {
+        $result = $this->mysqli->query($sql);
+        if ($result === false) {
+            throw new DatabaseException($this->mysqli->error);
+        }
+
+        return $result;
+    }
+
+    /**
      * Fix and rewrite CREATE statements if needed.
      *
      * @param array $createStatement The CREATE statement description array
@@ -814,14 +828,16 @@ class MySQL implements SchemaGetter
         $createStatement['create'] = preg_replace('/(AUTO_INCREMENT=)([0-9]+)/', '${1}1', $createStatement['create']);
         $createStatement['create'] .= ';';
 
-        if ($addIfNotExists) {
-            if ($createStatement['type'] == 'table') {
-                /* @noinspection SqlNoDataSourceInspection */
-                $createStatement['create'] = preg_replace('/CREATE TABLE/', 'CREATE TABLE IF NOT EXISTS',
-                    $createStatement['create']);
-            } elseif ($createStatement['type'] == 'view') {
-                $createStatement['create'] = preg_replace('/CREATE/', 'CREATE OR REPLACE', $createStatement['create']);
-            }
+        if (!$addIfNotExists) {
+            return $createStatement;
+        }
+
+        if ($createStatement['type'] == SchemaGetter::CREATE_TYPE_TABLE) {
+            /* @noinspection SqlNoDataSourceInspection */
+            $createStatement['create'] = preg_replace('/CREATE TABLE/', 'CREATE TABLE IF NOT EXISTS',
+                $createStatement['create']);
+        } elseif ($createStatement['type'] == SchemaGetter::CREATE_TYPE_VIEW) {
+            $createStatement['create'] = preg_replace('/CREATE/', 'CREATE OR REPLACE', $createStatement['create']);
         }
 
         return $createStatement;
@@ -830,17 +846,17 @@ class MySQL implements SchemaGetter
     /**
      * Get all rows from the DB result.
      *
-     * @param \mysqli_result $result The database query response
+     * @param \mysqli_result|bool $result The return of query method.
      *
      * @return array The array of SQL rows
      */
-    private function getRowsArray($result)
+    public function getRowsArray($result)
     {
-        if (!$result) {
-            return [];
-        }
-
         $rows = [];
+
+        if (!$result) {
+            return $rows;
+        }
 
         while ($row = $result->fetch_assoc()) {
             $rows[] = $row;

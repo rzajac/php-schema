@@ -15,22 +15,22 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\SchemaDump\Database;
+namespace Kicaj\Test\Schema;
 
-use Kicaj\SchemaDump\Database\SchemaDumpFactory;
-use Kicaj\Test\SchemaDump\BaseTest;
+use Kicaj\Schema\Database\SchemaFactory;
+use Kicaj\Test\Schema\BaseTest;
 use Kicaj\Tools\Db\DatabaseException;
 use Kicaj\Tools\Db\DbConnector;
 use Kicaj\Tools\Exception;
 
 /**
- * SchemaDumpFactory tests.
+ * SchemaFactory tests.
  *
- * @coversDefaultClass Kicaj\SchemaDump\Database\SchemaDumpFactory
+ * @coversDefaultClass Kicaj\Schema\Database\SchemaFactory
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class SchemaDumpFactory_Test extends BaseTest
+class SchemaFactory_Test extends BaseTest
 {
     /**
      * @dataProvider factoryProvider
@@ -42,14 +42,14 @@ class SchemaDumpFactory_Test extends BaseTest
      */
     public function test_factory($driverName, $expMsg)
     {
-        $dbConfig = self::getDbConfig('SCHEMA_DUMP1');
+        $dbConfig = self::getSchemaConfig('SCHEMA1');
         $dbConfig['connection']['driver'] = $driverName;
 
         try {
-            $mysql = SchemaDumpFactory::factory($dbConfig);
+            $mysql = SchemaFactory::factory($dbConfig);
 
             $hasThrown = false;
-            $this->assertInstanceOf('\Kicaj\SchemaDump\SchemaGetter', $mysql);
+            $this->assertInstanceOf('\Kicaj\Schema\SchemaGetter', $mysql);
         } catch (Exception $e) {
             $hasThrown = true;
             $this->assertContains($expMsg, $e->getMessage());
@@ -75,13 +75,15 @@ class SchemaDumpFactory_Test extends BaseTest
      */
     public function test_factoryConnErr()
     {
-        SchemaDumpFactory::_resetInstances();
+        // Given
+        SchemaFactory::_resetInstances();
 
-        $dbConfig = self::getDbConfig('SCHEMA_DUMP1');
+        // When
+        $dbConfig = self::getSchemaConfig('SCHEMA1');
         $dbConfig['connection']['password'] = 'wrongOne';
 
         try {
-            SchemaDumpFactory::factory($dbConfig, true);
+            SchemaFactory::factory($dbConfig, true);
             $thrown = false;
             $errMsg = '';
         } catch (DatabaseException $e) {
@@ -89,6 +91,7 @@ class SchemaDumpFactory_Test extends BaseTest
             $errMsg = $e->getMessage();
         }
 
+        // Then
         $this->assertTrue($thrown);
         $this->assertContains('Access denied for user', $errMsg);
     }
@@ -98,11 +101,13 @@ class SchemaDumpFactory_Test extends BaseTest
      */
     public function test_factory_sameInstance()
     {
-        $dbConfig = self::getDbConfig('SCHEMA_DUMP1');
+        // When
+        $dbConfig = self::getSchemaConfig('SCHEMA1');
 
-        $db1 = SchemaDumpFactory::factory($dbConfig);
-        $db2 = SchemaDumpFactory::factory($dbConfig);
+        $db1 = SchemaFactory::factory($dbConfig);
+        $db2 = SchemaFactory::factory($dbConfig);
 
+        // Then
         $this->assertSame($db1, $db2);
     }
 }

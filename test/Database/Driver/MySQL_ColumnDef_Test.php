@@ -14,17 +14,17 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\SchemaDump\Database\Driver;
+namespace Kicaj\Test\Schema\Database\Driver;
 
-use Kicaj\SchemaDump\ColumnDefinition;
-use Kicaj\SchemaDump\Database\Driver\MySQL;
-use Kicaj\SchemaDump\SchemaDump;
+use Kicaj\Schema\ColumnDefinition;
+use Kicaj\Schema\Database\Driver\MySQL;
+use Kicaj\Schema\Schema;
 use Kicaj\Tools\Db\DbConnector;
 
 /**
  * MySQL_ColumnDef_Test.
  *
- * @coversDefaultClass \Kicaj\SchemaDump\Database\Driver\MySQL
+ * @coversDefaultClass \Kicaj\Schema\Database\Driver\MySQL
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
@@ -39,12 +39,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_int_unsigned_notNull_autoincrement()
     {
+        // When
         $colDefStr = '  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('id', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_INT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -68,12 +70,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_int_notNull_autoincrement()
     {
+        // When
         $colDefStr = '  `id` int(11) NOT NULL AUTO_INCREMENT,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('id', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_INT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -96,12 +100,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_int_unsigned_notNull()
     {
+        // When
         $colDefStr = '  `t1_id` int(10) unsigned NOT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('t1_id', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_INT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -123,12 +129,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_int_unsigned_notNull_default()
     {
+        // When
         $colDefStr = '`col1` int(11) unsigned NOT NULL DEFAULT \'123\',';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('col1', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_INT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -152,12 +160,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_int_default_null_last()
     {
+        // When
         $colDefStr = '`col1` int(11) DEFAULT NULL';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('col1', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_INT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -181,12 +191,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_int_default_value_last()
     {
+        // When
         $colDefStr = '`col1` int(11) DEFAULT \'123\'';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('col1', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_INT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -210,12 +222,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_int_unsigned_default_null()
     {
+        // When
         $colDefStr = '`col1` int(11) unsigned DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('col1', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_INT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -239,12 +253,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_tinyint_default_null()
     {
+        // When
         $colDefStr = '  `tint` tinyint(4) DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('tint', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_TINYINT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -268,12 +284,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_tinyint_unsigned_default_null()
     {
+        // When
         $colDefStr = '  `tint` tinyint(4) unsigned DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('tint', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_TINYINT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -295,7 +313,7 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      * @covers ::setTypeBounds
      * @covers ::mySQLTypeLengths
      *
-     * @expectedException \Kicaj\SchemaDump\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaException
      * @expectedExceptionMessageRegExp /could not decipher DEFAULT: /
      */
     public function test_parseColumn_int_unsigned_default_error()
@@ -313,12 +331,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_char_default_null()
     {
+        // When
         $colDefStr = '  `chr` char(1) DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('chr', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_STRING, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_STRING, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_CHAR, $colDef->getDbType());
 
         $this->assertSame(0, $colDef->getMinLength());
@@ -341,12 +361,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_vchar_default_null()
     {
+        // When
         $colDefStr = '  `vchr` varchar(2) DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('vchr', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_STRING, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_STRING, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_VARCHAR, $colDef->getDbType());
 
         $this->assertSame(0, $colDef->getMinLength());
@@ -368,12 +390,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_smallint_default_null()
     {
+        // When
         $colDefStr = '  `sint` smallint(6) DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('sint', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_SMALLINT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -397,12 +421,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_smallint_unsigned_default_null()
     {
+        // When
         $colDefStr = '  `sint` smallint(6) unsigned DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('sint', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_SMALLINT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -426,12 +452,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_mediumint_default_null()
     {
+        // When
         $colDefStr = '  `mint` mediumint(9) DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('mint', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_MEDIUMINT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -455,12 +483,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_mediumint_unsigned_default_null()
     {
+        // When
         $colDefStr = '  `mint` mediumint(9) unsigned DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('mint', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_MEDIUMINT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -484,12 +514,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_integer_default_null()
     {
+        // When
         $colDefStr = '  `inte` int(11) DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('inte', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_INT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -513,12 +545,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_integer_unsigned_default_null()
     {
+        // When
         $colDefStr = '  `inte` int(11) unsigned DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('inte', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_INT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -542,12 +576,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_bigint_default_null()
     {
+        // When
         $colDefStr = '  `bint` bigint(20) DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('bint', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_BIGINT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -571,12 +607,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_bigint_unsigned_default_null()
     {
+        // When
         $colDefStr = '  `bint` bigint(20) unsigned DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('bint', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_BIGINT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -600,12 +638,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_float_default_null()
     {
+        // When
         $colDefStr = '  `flt` float DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('flt', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_FLOAT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_FLOAT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_FLOAT, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -629,12 +669,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_double_default_null()
     {
+        // When
         $colDefStr = '  `doub` double DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('doub', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_FLOAT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_FLOAT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_DOUBLE, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -656,12 +698,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_decimal_default_null()
     {
+        // When
         $colDefStr = '  `deci` decimal(10,0) DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('deci', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_INT, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_INT, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_DECIMAL, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -683,12 +727,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_bit_default_null()
     {
+        // When
         $colDefStr = '  `bt` bit(1) DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('bt', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_BINARY, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_BINARY, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_BIT, $colDef->getDbType());
 
         $this->assertSame(0, $colDef->getMinLength());
@@ -710,11 +756,13 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_tinytext_default_null()
     {
+        // When
         $colDefStr = '  `ttxt` tinytext,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('ttxt', $colDef->getName());
-        $this->assertSame(SchemaDump::PHP_TYPE_STRING, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_STRING, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_TINYTEXT, $colDef->getDbType());
 
         $this->assertSame(0, $colDef->getMinLength());
@@ -736,12 +784,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_txt_default_null()
     {
+        // When
         $colDefStr = '  `txt` text,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('txt', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_STRING, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_STRING, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_TEXT, $colDef->getDbType());
 
         $this->assertSame(0, $colDef->getMinLength());
@@ -763,12 +813,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_mediumtext_default_null()
     {
+        // When
         $colDefStr = '  `mtxt` mediumtext,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('mtxt', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_STRING, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_STRING, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_MEDIUMTEXT, $colDef->getDbType());
 
         $this->assertSame(0, $colDef->getMinLength());
@@ -790,12 +842,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_longtext_default_null()
     {
+        // When
         $colDefStr = '  `ltxt` longtext,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('ltxt', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_STRING, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_STRING, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_LONGTEXT, $colDef->getDbType());
 
         $this->assertSame(0, $colDef->getMinLength());
@@ -817,12 +871,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_tinyblob_default_null()
     {
+        // When
         $colDefStr = '  `tblob` tinyblob,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('tblob', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_STRING, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_STRING, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_TINYBLOB, $colDef->getDbType());
 
         $this->assertSame(0, $colDef->getMinLength());
@@ -844,12 +900,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_mediumblob_default_null()
     {
+        // When
         $colDefStr = '  `mblob` mediumblob,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('mblob', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_STRING, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_STRING, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_MEDIUMBLOB, $colDef->getDbType());
 
         $this->assertSame(0, $colDef->getMinLength());
@@ -871,12 +929,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_blob_default_null()
     {
+        // When
         $colDefStr = '  `nblob` blob,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('nblob', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_STRING, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_STRING, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_BLOB, $colDef->getDbType());
 
         $this->assertSame(0, $colDef->getMinLength());
@@ -898,12 +958,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_longblob_default_null()
     {
+        // When
         $colDefStr = '  `lblob` longblob,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('lblob', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_STRING, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_STRING, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_LONGBLOB, $colDef->getDbType());
 
         $this->assertSame(0, $colDef->getMinLength());
@@ -925,12 +987,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_binary_default_null()
     {
+        // When
         $colDefStr = '  `bin` binary(1) DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('bin', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_BINARY, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_BINARY, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_BINARY, $colDef->getDbType());
 
         $this->assertSame(0, $colDef->getMinLength());
@@ -952,12 +1016,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_varbinary_default_null()
     {
+        // When
         $colDefStr = '  `vbin` varbinary(20) DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('vbin', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_BINARY, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_BINARY, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_VARBINARY, $colDef->getDbType());
 
         $this->assertSame(0, $colDef->getMinLength());
@@ -979,12 +1045,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_date_default_null()
     {
+        // When
         $colDefStr = '  `d` date DEFAULT \'2015-10-20\',';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('d', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_DATE, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_DATE, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_DATE, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -1006,12 +1074,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_datetime_default_null()
     {
+        // When
         $colDefStr = '  `dt` datetime DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('dt', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_DATETIME, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_DATETIME, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_DATETIME, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -1033,12 +1103,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_timestamp_default_null()
     {
+        // When
         $colDefStr = '  `ts` timestamp NULL DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('ts', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_TIMESTAMP, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_TIMESTAMP, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_TIMESTAMP, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -1060,12 +1132,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_time_default_null()
     {
+        // When
         $colDefStr = '  `tm` time DEFAULT NULL,';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('tm', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_TIME, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_TIME, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_TIME, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -1087,12 +1161,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_year_default_null()
     {
+        // When
         $colDefStr = '  `y` year(4) DEFAULT \'2015\',';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('y', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_YEAR, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_YEAR, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_YEAR, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -1114,12 +1190,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_enum()
     {
+        // When
         $colDefStr = '  `e` enum(\'0\',\'XS\',\'s p a c e\') DEFAULT \'XS\',';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('e', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_STRING, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_STRING, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_ENUM, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -1143,12 +1221,14 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_parseColumn_set()
     {
+        // When
         $colDefStr = '  `s` set(\'0\',\'XS\',\'s p a c e\') DEFAULT \'0\',';
         $colDef = MySQL::parseColumn($colDefStr, 'testTable');
 
+        // Then
         $this->assertSame('s', $colDef->getName());
 
-        $this->assertSame(SchemaDump::PHP_TYPE_STRING, $colDef->getPhpType());
+        $this->assertSame(Schema::PHP_TYPE_STRING, $colDef->getPhpType());
         $this->assertSame(MySQL::TYPE_SET, $colDef->getDbType());
 
         $this->assertSame(null, $colDef->getMinLength());
@@ -1166,7 +1246,7 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::setTypeBounds
      *
-     * @expectedException \Kicaj\SchemaDump\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaException
      * @expectedExceptionMessage unknown database type: wrong type
      */
     public function test_setTypeBounds_error()
@@ -1180,7 +1260,7 @@ class MySQL_ColumnDef_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::mySQLToPhpType
      *
-     * @expectedException \Kicaj\SchemaDump\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaException
      * @expectedExceptionMessage unknown type:
      */
     public function test_mySQLToPhpType_error()

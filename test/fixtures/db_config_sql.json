@@ -4,10 +4,10 @@
     "password": "testUserPass",
     "host": "localhost",
     "port": "3306",
-    "database": "test",
+    "database": "testSchemaLib",
     "driver": "mysql"
   },
-  "export_type": "php_array",
+  "export_format": "sql",
   "add_if_not_exists": true,
-  "output_file": "tmp/schema.php"
+  "output_file": "tmp/schema.sql"
 }

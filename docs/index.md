@@ -1,12 +1,12 @@
-## Documentation for SchemaDump
+## Documentation for Schema
 ### Classes
 
-- [Kicaj\SchemaDump\SchemaException](Kicaj-SchemaDump-SchemaException.md)
-- [Kicaj\SchemaDump\TableDefinition](Kicaj-SchemaDump-TableDefinition.md)
-- [Kicaj\SchemaDump\ColumnDefinition](Kicaj-SchemaDump-ColumnDefinition.md)
-- [Kicaj\SchemaDump\Database\SchemaDumpFactory](Kicaj-SchemaDump-Database-SchemaDumpFactory.md)
-- [Kicaj\SchemaDump\SchemaDump](Kicaj-SchemaDump-SchemaDump.md)
+- [Kicaj\Schema\SchemaException](Kicaj-Schema-SchemaException.md)
+- [Kicaj\Schema\Database\SchemaFactory](Kicaj-Schema-Database-SchemaFactory.md)
+- [Kicaj\Schema\TableDefinition](Kicaj-Schema-TableDefinition.md)
+- [Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)
+- [Kicaj\Schema\Schema](Kicaj-Schema-Schema.md)
 
 ### Interfaces
 
-- [Kicaj\SchemaDump\SchemaGetter](Kicaj-SchemaDump-SchemaGetter.md)
+- [Kicaj\Schema\SchemaGetter](Kicaj-Schema-SchemaGetter.md)
