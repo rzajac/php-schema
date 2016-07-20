@@ -10,12 +10,12 @@ At the moment only MySQL is supported.
 
 There are two export modes:
 
-- **phpFile** - creates includable PHP file with $createStatements associative array where keys are table names and values are SQL CREATE statements.
+- **php_file** - creates includable PHP file with $createStatements associative array where keys are table names and values are SQL CREATE statements.
 - **sql** - creates file with CREATE statements for all tables in given database.
 
 When used as a library there is additional export type:
 
-- **phpArray** - returns PHP array with create statements to the caller.
+- **php_array** - returns PHP array with create statements to the caller.
 
 This tool also rewrites create statements it in following way:
 
