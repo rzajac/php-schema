@@ -20,8 +20,8 @@ namespace Kicaj\Test\Schema\Database\Driver;
 use Kicaj\Schema\Database\Driver\MySQL;
 use Kicaj\Schema\SchemaGetter;
 use Kicaj\Test\Schema\BaseTest;
-use Kicaj\Tools\Db\DatabaseException;
-use Kicaj\Tools\Db\DbConnector;
+use Kicaj\DbKit\DatabaseException;
+use Kicaj\DbKit\DbConnector;
 use Kicaj\Tools\Helper\Str;
 use Mockery\Mock;
 
@@ -163,7 +163,7 @@ class MySQL_Test extends BaseTest
     /**
      * @covers ::dbGetCreateStatement
      *
-     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedException \Kicaj\DbKit\DatabaseException
      * @expectedExceptionMessage doesn't exist
      */
     public function test_getDbCreateStatement_err()
@@ -390,7 +390,7 @@ class MySQL_Test extends BaseTest
     /**
      * @covers ::runQuery
      *
-     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedException \Kicaj\DbKit\DatabaseException
      */
     public function test_runQuery_error()
     {

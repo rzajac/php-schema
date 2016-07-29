@@ -19,8 +19,8 @@ namespace Kicaj\Test\Schema;
 
 use Kicaj\Schema\Database\SchemaFactory;
 use Kicaj\Test\Schema\BaseTest;
-use Kicaj\Tools\Db\DatabaseException;
-use Kicaj\Tools\Db\DbConnector;
+use Kicaj\DbKit\DatabaseException;
+use Kicaj\DbKit\DbConnector;
 use Kicaj\Tools\Exception;
 
 /**

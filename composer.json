@@ -6,7 +6,8 @@
   "license": "Apache License 2.0",
   "require": {
     "php": ">=5.5",
-    "rzajac/phptools": "0.5.*",
+    "rzajac/phptools": "0.6.*",
+    "rzajac/dbkit": "0.0.*",
     "symfony/console": "~v2.7"
   },
   "require-dev": {

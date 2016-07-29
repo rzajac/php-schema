@@ -19,7 +19,7 @@ namespace Kicaj\Test\Schema;
 use Kicaj\Schema\ColumnDefinition;
 use Kicaj\Schema\SchemaGetter;
 use Kicaj\Schema\TableDefinition;
-use Kicaj\Tools\Db\DbConnector;
+use Kicaj\DbKit\DbConnector;
 
 /**
  * TableDefinition_Test.

@@ -3,7 +3,7 @@ Get database schema interface.
 
 ## Extends
 
-- Kicaj\Tools\Db\DbConnector
+- Kicaj\DbKit\DbConnector
 
 ## Constants
 
@@ -29,7 +29,7 @@ public function dbGetTableNames() : string[]
 ```
 
 Throws:
-- Kicaj\Tools\Db\DatabaseException
+- Kicaj\DbKit\DatabaseException
 
 Returns: **string[]** - The table names
 
@@ -65,7 +65,7 @@ Arguments:
 - _$addIfNotExists_ **boolean** - Set to true to add IF NOT EXIST to CREATE TABLE
 
 Throws:
-- Kicaj\Tools\Db\DatabaseException
+- Kicaj\DbKit\DatabaseException
 
 Returns: **array**
 
@@ -79,7 +79,7 @@ Arguments:
 - _$tableName_ **string** - The database table name
 
 Throws:
-- Kicaj\Tools\Db\DatabaseException
+- Kicaj\DbKit\DatabaseException
 
 Returns: **[Kicaj\Schema\TableDefinition](Kicaj-Schema-TableDefinition.md)**
 
@@ -93,7 +93,7 @@ Arguments:
 - _$addIfNotExists_ **boolean** - Set to true to add IF NOT EXIST to CREATE TABLE
 
 Throws:
-- Kicaj\Tools\Db\DatabaseException
+- Kicaj\DbKit\DatabaseException
 
 Returns: **array** - See SchemaGetter::dbGetCreateStatement
 

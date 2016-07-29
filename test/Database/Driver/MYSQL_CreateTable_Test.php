@@ -150,7 +150,7 @@ class MySQL_CreateTable_Test extends BaseTest
     /**
      * @covers ::dbGetTableDefinition
      *
-     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedException \Kicaj\DbKit\DatabaseException
      * @expectedExceptionMessage doesn't exist
      */
     public function test_dbGetTableDefinition_error()

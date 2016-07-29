@@ -21,9 +21,9 @@ use Kicaj\Schema\Database\Driver\MySQL;
 use Kicaj\Schema\Schema;
 use Kicaj\Schema\SchemaException;
 use Kicaj\Schema\SchemaGetter;
-use Kicaj\Tools\Db\DatabaseException;
-use Kicaj\Tools\Db\DbConnect;
-use Kicaj\Tools\Db\DbConnector;
+use Kicaj\DbKit\DatabaseException;
+use Kicaj\DbKit\DbConnect;
+use Kicaj\DbKit\DbConnector;
 
 /**
  * Helper class for getting database driver.

@@ -1,8 +1,8 @@
 <?php
 
 use Kicaj\Schema\Schema;
-use Kicaj\Tools\Db\DbConnect;
-use Kicaj\Tools\Db\DbConnector;
+use Kicaj\DbKit\DbConnect;
+use Kicaj\DbKit\DbConnector;
 
 $config = [
     Schema::CONFIG_KEY_CONNECTION => DbConnect::getCfg(DbConnector::DB_DRIVER_MYSQL, '127.0.0.1', 'testUser', 'unitTestPass', 'test', '3306'),

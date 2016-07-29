@@ -22,8 +22,8 @@ use Kicaj\Schema\Schema;
 use Kicaj\Schema\SchemaException;
 use Kicaj\Schema\SchemaGetter;
 use Kicaj\Schema\TableDefinition;
-use Kicaj\Tools\Db\DatabaseException;
-use Kicaj\Tools\Db\DbConnector;
+use Kicaj\DbKit\DatabaseException;
+use Kicaj\DbKit\DbConnector;
 use Kicaj\Tools\Traits\Error;
 use mysqli;
 

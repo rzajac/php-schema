@@ -20,7 +20,7 @@ namespace Kicaj\Test\Schema;
 
 use Kicaj\Schema\ExportCommand;
 use Kicaj\Schema\Schema;
-use Kicaj\Tools\Db\DbConnector;
+use Kicaj\DbKit\DbConnector;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use Symfony\Component\Console\Application;

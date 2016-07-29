@@ -18,7 +18,7 @@
 namespace Kicaj\Schema;
 
 use Kicaj\Schema\Database\SchemaFactory;
-use Kicaj\Tools\Db\DatabaseException;
+use Kicaj\DbKit\DatabaseException;
 
 /**
  * Schema.

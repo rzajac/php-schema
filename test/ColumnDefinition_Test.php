@@ -18,7 +18,7 @@ namespace Kicaj\Test\Schema;
 
 use Kicaj\Schema\ColumnDefinition;
 use Kicaj\Schema\Schema;
-use Kicaj\Tools\Db\DbConnector;
+use Kicaj\DbKit\DbConnector;
 
 /**
  * ColumnDefinition_Test.

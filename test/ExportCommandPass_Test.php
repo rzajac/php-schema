@@ -21,7 +21,7 @@ namespace Kicaj\Test\Schema {
     use Kicaj\Schema\ExportCommand;
     use Kicaj\Schema\Schema;
     use Kicaj\Test\Helper\TestCase\FixtureTestCase;
-    use Kicaj\Tools\Db\DbConnector;
+    use Kicaj\DbKit\DbConnector;
     use Symfony\Component\Console\Application;
     use Symfony\Component\Console\Tester\CommandTester;
 

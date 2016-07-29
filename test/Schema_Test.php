@@ -44,7 +44,7 @@ class Schema_Test extends BaseTest
     /**
      * @covers ::__construct
      *
-     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedException \Kicaj\DbKit\DatabaseException
      * @expectedExceptionMessageRegExp /Access denied for user/
      */
     public function test___construct_error()

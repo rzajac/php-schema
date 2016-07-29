@@ -70,7 +70,7 @@ Arguments:
 
 Throws:
 - [Kicaj\Schema\SchemaException](Kicaj-Schema-SchemaException.md), 
-- Kicaj\Tools\Db\DatabaseException
+- Kicaj\DbKit\DatabaseException
 
 -------
 #### make
@@ -83,7 +83,7 @@ Arguments:
 
 Throws:
 - [Kicaj\Schema\SchemaException](Kicaj-Schema-SchemaException.md), 
-- Kicaj\Tools\Db\DatabaseException
+- Kicaj\DbKit\DatabaseException
 
 Returns: **[Kicaj\Schema\Schema](Kicaj-Schema-Schema.md)**
 

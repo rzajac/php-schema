@@ -19,7 +19,7 @@ namespace Kicaj\Test\Schema\Database\Driver;
 use Kicaj\Schema\ColumnDefinition;
 use Kicaj\Schema\Database\Driver\MySQL;
 use Kicaj\Schema\Schema;
-use Kicaj\Tools\Db\DbConnector;
+use Kicaj\DbKit\DbConnector;
 
 /**
  * MySQL_ColumnDef_Test.

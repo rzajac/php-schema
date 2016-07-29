@@ -30,7 +30,7 @@ Arguments:
 
 Throws:
 - [Kicaj\Schema\SchemaException](Kicaj-Schema-SchemaException.md), 
-- Kicaj\Tools\Db\DatabaseException
+- Kicaj\DbKit\DatabaseException
 
 Returns: **[Kicaj\Schema\SchemaGetter](Kicaj-Schema-SchemaGetter.md)**
 

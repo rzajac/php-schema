@@ -17,7 +17,7 @@
 namespace Kicaj\Schema;
 
 use Kicaj\Tools\Cli\Interaction;
-use Kicaj\Tools\Db\DbConnector;
+use Kicaj\DbKit\DbConnector;
 use Kicaj\Tools\Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
