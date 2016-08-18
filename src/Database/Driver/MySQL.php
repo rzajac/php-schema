@@ -160,7 +160,7 @@ class MySQL implements SchemaGetter
 
     public function dbGetCreateStatement($tableName, $addIfNotExists = false)
     {
-        $result = $this->runQuery('SHOW CREATE TABLE ' . $tableName);
+        $result = $this->runQuery(sprintf('SHOW CREATE TABLE `%s`', $tableName));
         $createStatementResp = $this->getRowsArray($result);
 
         $createStatement = array_pop($createStatementResp);
