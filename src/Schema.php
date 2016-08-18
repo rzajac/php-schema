@@ -19,6 +19,7 @@ namespace Kicaj\Schema;
 
 use Kicaj\Schema\Database\SchemaFactory;
 use Kicaj\DbKit\DatabaseException;
+use Kicaj\Tools\Helper\Arr;
 
 /**
  * Schema.
@@ -149,12 +150,13 @@ class Schema
      */
     public function getCreateStatements($format = null)
     {
-        $exportType = $this->config[self::CONFIG_KEY_EXPORT_FORMAT];
+        $exportType = Arr::get($this->config, self::CONFIG_KEY_EXPORT_FORMAT);
         if ($format != null) {
             $exportType = $format;
         }
 
-        $createStatements = $this->dbDrv->dbGetCreateStatements($this->config[self::CONFIG_KEY_AINE]);
+        $aine = Arr::get($this->config, self::CONFIG_KEY_AINE, false);
+        $createStatements = $this->dbDrv->dbGetCreateStatements($aine);
 
         $ret = null;
 
