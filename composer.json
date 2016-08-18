@@ -6,15 +6,14 @@
   "license": "Apache License 2.0",
   "require": {
     "php": ">=5.5",
-    "rzajac/phptools": "0.6.*",
-    "rzajac/dbkit": "0.0.*",
-    "symfony/console": "~v2.7"
+    "rzajac/phptools": "^0.6",
+    "rzajac/dbkit": "^0.0",
+    "symfony/console": "^3.1"
   },
   "require-dev": {
-    "phpunit/phpunit": "5.4",
-    "rzajac/php-test-helper": "0.5.*",
-    "phpdocumentor/phpdocumentor": "~2.8",
-    "mikey179/vfsStream": "~1.6",
+    "phpunit/phpunit": "^5.4",
+    "rzajac/php-test-helper": "^0.5",
+    "mikey179/vfsStream": "^1.6",
     "mockery/mockery": "^0.9.5"
   },
   "bin": [
