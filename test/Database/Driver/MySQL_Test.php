@@ -84,13 +84,9 @@ class MySQL_Test extends BaseTest
         } catch (DatabaseException $e) {
             $thrown = true;
 
-            if ($expMsg === '') {
-                $this->fail('Did not expect to see error: ' . $e->getMessage());
-            }
+            $this->assertFalse('' == $expMsg, 'Did not expect to see error: ' . $e->getMessage());
         } finally {
-            if ($expMsg !== '' && $thrown === false) {
-                $this->fail('Expected to see error: ' . $expMsg);
-            }
+            $this->assertFalse($expMsg !== '' && $thrown === false, 'Expected to see error: ' . $expMsg);
         }
     }
 
@@ -308,6 +304,8 @@ class MySQL_Test extends BaseTest
      * @param string   $name
      * @param string   $type
      * @param string[] $colNames
+     *
+     * @throws \Kicaj\Schema\SchemaException
      */
     public function test_parseIndex($keyDef, $name, $type, $colNames)
     {

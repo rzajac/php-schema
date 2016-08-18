@@ -142,6 +142,7 @@ class Schema
      *   - type   - table, view ( one of the self::CREATE_TYPE_* )
      *   - name   - table name
      *
+     * @throws DatabaseException
      * @throws SchemaException
      *
      * @return array|string

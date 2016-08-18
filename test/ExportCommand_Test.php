@@ -168,7 +168,7 @@ class ExportCommand_Test extends BaseTest
      * @covers ::readConfigFile
      *
      * @expectedException \Kicaj\Tools\Exception
-     * @expectedExceptionMessage Invalid config vfs://root/db_config.json - Syntax error.
+     * @expectedExceptionMessage Invalid config vfs://root/db_config.json - empty file.
      */
     public function test_readConfigFile_empty()
     {

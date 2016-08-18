@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="test/bootstrap.php">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/5.4/phpunit.xsd"
+         bootstrap="test/bootstrap.php"
+         colors="always"
+         backupGlobals="false"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         beStrictAboutTodoAnnotatedTests="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         verbose="true"
+         addUncoveredFilesFromWhitelist="true"
+         processUncoveredFilesFromWhitelist="true">
+
     <php>
         <var name="TEST_DB_SCHEMA1_HOST" value="127.0.0.1"/>
         <var name="TEST_DB_SCHEMA1_PORT" value="3306"/>
@@ -11,18 +25,22 @@
         <var name="TEST_FIXTURE_DIRECTORY" value="test/fixtures"/>
     </php>
 
+    <php>
+        <const name="UNIT_TEST_YOUR_APPLICATION_TEST_SUITE" value="yes"/>
+        <var name="TEST_FIXTURE_DIRECTORY" value="test/fixtures"/>
+    </php>
+
+    <testsuite>
+        <directory suffix="Test.php">test</directory>
+    </testsuite>
+
+    <logging>
+        <log type="coverage-html" target="coverage" lowUpperBound="65" highLowerBound="85"/>
+    </logging>
+
     <filter>
-        <whitelist addUncoveredFilesFromWhitelist="true">
+        <whitelist>
             <directory suffix=".php">src</directory>
-            <exclude>
-                <directory>vendor</directory>
-            </exclude>
         </whitelist>
     </filter>
-
-    <testsuites>
-        <testsuite name="schema exporter tests" addUncoveredFilesFromWhitelist="true">
-            <directory>test</directory>
-        </testsuite>
-    </testsuites>
 </phpunit>

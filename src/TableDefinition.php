@@ -101,7 +101,7 @@ class TableDefinition
      *
      * @param ColumnDefinition $colDef
      *
-     * @return ColumnDefinition
+     * @return TableDefinition
      */
     public function addColumn(ColumnDefinition $colDef)
     {

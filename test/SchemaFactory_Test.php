@@ -17,10 +17,9 @@
  */
 namespace Kicaj\Test\Schema;
 
-use Kicaj\Schema\Database\SchemaFactory;
-use Kicaj\Test\Schema\BaseTest;
 use Kicaj\DbKit\DatabaseException;
 use Kicaj\DbKit\DbConnector;
+use Kicaj\Schema\Database\SchemaFactory;
 use Kicaj\Tools\Exception;
 
 /**
@@ -28,7 +27,7 @@ use Kicaj\Tools\Exception;
  *
  * @coversDefaultClass Kicaj\Schema\Database\SchemaFactory
  *
- * @author Rafal Zajac <rzajac@gmail.com>
+ * @author             Rafal Zajac <rzajac@gmail.com>
  */
 class SchemaFactory_Test extends BaseTest
 {
@@ -39,6 +38,8 @@ class SchemaFactory_Test extends BaseTest
      *
      * @param string $driverName
      * @param string $expMsg
+     *
+     * @throws DatabaseException
      */
     public function test_factory($driverName, $expMsg)
     {

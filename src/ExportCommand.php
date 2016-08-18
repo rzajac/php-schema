@@ -99,7 +99,13 @@ class ExportCommand extends Command
             throw new Exception(sprintf('Config file %s is not readable.', $configPath));
         }
 
-        $config = json_decode(file_get_contents($configPath), true);
+        $content = file_get_contents($configPath);
+
+        if ('' == $content) {
+            throw new Exception(sprintf('Invalid config %s - empty file.', $configPath, json_last_error_msg()));
+        }
+
+        $config = json_decode($content, true);
         if ($config === null) {
             throw new Exception(sprintf('Invalid config %s - %s.', $configPath, json_last_error_msg()));
         }
