@@ -40,6 +40,6 @@ $exportCmd = new ExportCommand();
 
 $application = new Application();
 $application->setName('Database schema exporter');
-$application->setVersion('0.6.0');
+$application->setVersion('0.7.6');
 $application->add($exportCmd);
 $application->run();

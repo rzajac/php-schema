@@ -2,8 +2,14 @@
   "name": "rzajac/schema",
   "description": "Database schema exporter",
   "keywords": ["database", "schema"],
-  "type": "library",
+  "type": "project",
   "license": "Apache License 2.0",
+  "authors": [
+    {
+      "name": "Rafal Zajac",
+      "email": "rzajac@gmail.com"
+    }
+  ],
   "require": {
     "php": ">=5.5",
     "rzajac/phptools": "^0.7",
