@@ -10,3 +10,4 @@
 ### Interfaces
 
 - [Kicaj\Schema\SchemaGetter](Kicaj-Schema-SchemaGetter.md)
+

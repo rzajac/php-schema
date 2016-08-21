@@ -116,6 +116,7 @@ name   - table name
 
 
 Throws:
+- Kicaj\DbKit\DatabaseException, 
 - [Kicaj\Schema\SchemaException](Kicaj-Schema-SchemaException.md)
 
 Returns: **array|string**

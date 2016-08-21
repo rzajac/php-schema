@@ -89,12 +89,12 @@ Returns: **static**
 #### addColumn
 Add database column definition to the table.
 ```php
-public function addColumn([Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md) $colDef) : Kicaj\Schema\ColumnDefinition
+public function addColumn([Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md) $colDef) : Kicaj\Schema\TableDefinition
 ```
 Arguments:
 - _$colDef_ **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
 
-Returns: **[Kicaj\Schema\ColumnDefinition](Kicaj-Schema-ColumnDefinition.md)**
+Returns: **[Kicaj\Schema\TableDefinition](Kicaj-Schema-TableDefinition.md)**
 
 -------
 #### addIndex
