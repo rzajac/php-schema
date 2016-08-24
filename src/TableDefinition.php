@@ -62,6 +62,11 @@ class TableDefinition
     protected $indexes = [];
 
     /**
+     * @var array
+     */
+    protected $constraints = [];
+
+    /**
      * TableDefinition constructor.
      *
      * @param string $tableName The database table name.
@@ -129,6 +134,40 @@ class TableDefinition
         } else {
             $this->indexes[] = $indexDefinition;
         }
+    }
+
+    /**
+     * Add index constraint.
+     *
+     * The format must be:
+     *
+     * [constraintName, indexName, foreignTableName, $foreignIndexName]
+     *
+     * @param array $constraint
+     */
+    public function addConstraint(array $constraint)
+    {
+        $this->constraints[] = $constraint;
+    }
+
+    /**
+     * Has index constraints.
+     *
+     * @return bool
+     */
+    public function hasConstraints()
+    {
+        return count($this->constraints) > 0;
+    }
+
+    /**
+     * Return index constraints.
+     *
+     * @return array
+     */
+    public function getConstraints()
+    {
+        return $this->constraints;
     }
 
     /**

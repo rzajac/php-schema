@@ -124,4 +124,28 @@ class TableDefinition_Test extends \PHPUnit_Framework_TestCase
         $this->assertSame($index3, $gotIndexes[1]);
         $this->assertSame($index1, $td->getPrimaryKey());
     }
+
+    /**
+     * @covers ::addConstraint
+     * @covers ::hasConstraints
+     * @covers ::getConstraints
+     */
+    public function test_constraints()
+    {
+        // Given - Indexes definition
+        $c1 = ['rel12', 'f1', 't2', 'id2'];
+        $c2 = ['rel13', 'f3', 't3', 'id3'];
+
+        // Construct test table definition
+        $td = TableDefinition::make('testTable');
+        $td->addConstraint($c1);
+        $td->addConstraint($c2);
+        $gotConstraints = $td->getConstraints();
+
+        // Then
+        $this->assertTrue($td->hasConstraints());
+        $this->assertSame(2, count($gotConstraints));
+        $this->assertSame($c1, $gotConstraints[0]);
+        $this->assertSame($c2, $gotConstraints[1]);
+    }
 }

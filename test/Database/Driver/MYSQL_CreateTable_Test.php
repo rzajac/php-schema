@@ -157,4 +157,19 @@ class MySQL_CreateTable_Test extends BaseTest
     {
         $this->schema->dbGetTableDefinition('not_existing');
     }
+
+    /**
+     * @covers ::dbGetTableDefinition
+     */
+    public function test_dbGetTableDefinition_foreignKeys()
+    {
+        // Given
+        self::dbLoadFixtures('SCHEMA1', ['table2.sql', 'table3.sql', 'table1.sql']);
+
+        // When
+        $tableDef = $this->schema->dbGetTableDefinition('table1');
+
+        // Then
+        $this->assertTrue($tableDef->hasConstraints());
+    }
 }

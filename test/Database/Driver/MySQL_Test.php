@@ -121,7 +121,7 @@ class MySQL_Test extends BaseTest
         $tableNames = $this->driver->dbGetTableNames();
 
         // Then
-        $this->assertSame(['bigtable'], $tableNames);
+        $this->assertSame(['bigtable', 'table1', 'table2', 'table3'], $tableNames);
     }
 
     /**
@@ -417,5 +417,62 @@ class MySQL_Test extends BaseTest
 
         // Then
         $this->assertSame([], $got);
+    }
+
+    /**
+     * @dataProvider constraintProvider
+     *
+     * @covers ::parseConstraint
+     *
+     * @param string $constraint
+     * @param string $name
+     * @param string $keyName
+     * @param string $fTableName
+     * @param string $fIndexName
+     *
+     * @throws \Kicaj\Schema\SchemaException
+     */
+    public function test_constraints($constraint, $name, $keyName, $fTableName, $fIndexName)
+    {
+        // When
+        $got = $this->driver->parseConstraint($constraint);
+
+        // Then
+        $this->assertSame($name, $got[0]);
+        $this->assertSame($keyName, $got[1]);
+        $this->assertSame($fTableName, $got[2]);
+        $this->assertSame($fIndexName, $got[3]);
+    }
+
+    public function constraintProvider()
+    {
+        return [
+            [
+                'CONSTRAINT `rel12` FOREIGN KEY (`f1`) REFERENCES `table2` (`id`) ON UPDATE CASCADE,',
+                'rel12',
+                'f1',
+                'table2',
+                'id'
+            ],
+
+            [
+                'CONSTRAINT `rel13` FOREIGN KEY (`f2`) REFERENCES `table3` (`other_id`) ON DELETE NO ACTION',
+                'rel13',
+                'f2',
+                'table3',
+                'other_id'
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::parseConstraint
+     *
+     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedExceptionMessageRegExp /^cannot parse table constraint:/
+     */
+    public function test_parseConstraint_error()
+    {
+        $this->driver->parseConstraint('not making sense');
     }
 }

@@ -17,13 +17,13 @@
  */
 namespace Kicaj\Schema\Database\Driver;
 
+use Kicaj\DbKit\DatabaseException;
+use Kicaj\DbKit\DbConnector;
 use Kicaj\Schema\ColumnDefinition;
 use Kicaj\Schema\Schema;
 use Kicaj\Schema\SchemaException;
 use Kicaj\Schema\SchemaGetter;
 use Kicaj\Schema\TableDefinition;
-use Kicaj\DbKit\DatabaseException;
-use Kicaj\DbKit\DbConnector;
 use Kicaj\Tools\Traits\Error;
 use mysqli;
 
@@ -82,6 +82,9 @@ class MySQL implements SchemaGetter
     const INDEX_PRIMARY = 'PRIMARY';
     const INDEX_UNIQUE = 'UNIQUE';
     const INDEX_KEY = 'KEY';
+
+    /** MySQL index constraints. */
+    const CONSTRAINT = 'CONSTRAINT';
 
     /**
      * The database name.
@@ -257,6 +260,9 @@ class MySQL implements SchemaGetter
                 $index = self::parseIndex($line);
                 $index[1] = self::INDEX_KEY;
                 $tableDef->addIndex($index);
+            } elseif (strpos($line, 'CONSTRAINT') === 0) {
+                $constraint = self::parseConstraint($line);
+                $tableDef->addConstraint($constraint);
             }
         }
 
@@ -285,6 +291,31 @@ class MySQL implements SchemaGetter
         $colNames = explode(',', str_replace('`', '', $matches[3]));
 
         return [$name, $type, $colNames];
+    }
+
+    /**
+     * Parse index constraint.
+     *
+     * @param string $constraintDef The constraint definition.
+     *
+     * @throws SchemaException
+     *
+     * @return array
+     */
+    public static function parseConstraint($constraintDef)
+    {
+        preg_match('/(?:.*)?CONSTRAINT `(.*?)` FOREIGN KEY \(`(.*?)`\) REFERENCES `(.*?)` \(`(.*?)`\) (?:.*)/', $constraintDef, $matches);
+
+        if (count($matches) != 5) {
+            throw new SchemaException('cannot parse table constraint: ' . $constraintDef);
+        }
+
+        $name = trim($matches[1]);
+        $keyName = trim($matches[2]);
+        $fTableName = trim($matches[3]);
+        $fIndexName = trim($matches[4]);
+
+        return [$name, $keyName, $fTableName, $fIndexName];
     }
 
     /**
@@ -418,7 +449,7 @@ class MySQL implements SchemaGetter
 
             $lengthDef = $matches[1];
             $left = $lengthDef;
-            $colDef->setMinLength(0)->setMaxLength((int) $left);
+            $colDef->setMinLength(0)->setMaxLength((int)$left);
         }
     }
 
