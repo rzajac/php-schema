@@ -4,7 +4,7 @@
     "password": "testUserPass",
     "host": "localhost",
     "port": "3306",
-    "database": "test",
+    "database": "testSchemaLib",
     "driver": "mysql"
   },
   "export_format": "php_array",

@@ -18,7 +18,7 @@
 
 namespace Kicaj\Test\Schema;
 
-use Kicaj\Schema\ExportCommand;
+use Kicaj\Schema\Cmd\ExportCmd;
 use Kicaj\Schema\Schema;
 use Kicaj\DbKit\DbConnector;
 use org\bovigo\vfs\vfsStream;
@@ -29,7 +29,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 /**
  * ExportCommand_Test.
  *
- * @coversDefaultClass \Kicaj\Schema\ExportCommand
+ * @coversDefaultClass \Kicaj\Schema\Cmd\ExportCmd
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
@@ -41,7 +41,7 @@ class ExportCommand_Test extends BaseTest
     protected $app;
 
     /**
-     * @var ExportCommand
+     * @var ExportCmd
      */
     protected $cmd;
 
@@ -52,7 +52,7 @@ class ExportCommand_Test extends BaseTest
 
     protected function setUp()
     {
-        $this->cmd = new ExportCommand();
+        $this->cmd = new ExportCmd();
         $this->app = new Application();
         $this->app->add($this->cmd);
 
@@ -153,7 +153,7 @@ class ExportCommand_Test extends BaseTest
         $this->assertArrayHasKey(Schema::CONFIG_KEY_EXPORT_FORMAT, $config);
         $this->assertArrayHasKey(Schema::CONFIG_KEY_AINE, $config);
         $this->assertArrayHasKey(Schema::CONFIG_KEY_OUTPUT_FILE, $config);
-        $this->assertArrayHasKey(ExportCommand::CONFIG_KEY_PATH, $config);
+        $this->assertArrayHasKey(ExportCmd::CONFIG_KEY_PATH, $config);
 
         $this->assertSame(6, count($config[Schema::CONFIG_KEY_CONNECTION]));
         $this->assertArrayHasKey(DbConnector::DB_CFG_HOST, $config[Schema::CONFIG_KEY_CONNECTION]);
@@ -348,6 +348,7 @@ class ExportCommand_Test extends BaseTest
     {
         // Given
         $this->dbDropAllTables('SCHEMA1');
+        $this->dbDropAllViews('SCHEMA1');
         $this->dbLoadFixtures('SCHEMA1', 'bigtable_create.sql');
 
         $vCfg = vfsStream::newDirectory('cfg')->at($this->vfsRoot);

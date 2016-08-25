@@ -14,8 +14,9 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Schema;
+namespace Kicaj\Schema\Cmd;
 
+use Kicaj\Schema\Schema;
 use Kicaj\Tools\Cli\Interaction;
 use Kicaj\DbKit\DbConnector;
 use Kicaj\Tools\Exception;
@@ -29,7 +30,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class ExportCommand extends Command
+class ExportCmd extends Command
 {
     /** The key in config array where absolute path to config is stored. */
     const CONFIG_KEY_PATH = '_config_path_';

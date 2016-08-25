@@ -18,7 +18,7 @@
 
 namespace Kicaj\Test\Schema {
 
-    use Kicaj\Schema\ExportCommand;
+    use Kicaj\Schema\Cmd\ExportCmd;
     use Kicaj\Schema\Schema;
     use Kicaj\Test\Helper\TestCase\FixtureTestCase;
     use Kicaj\DbKit\DbConnector;
@@ -28,7 +28,7 @@ namespace Kicaj\Test\Schema {
     /**
      * ExportCommand_Test.
      *
-     * @coversDefaultClass \Kicaj\Schema\ExportCommand
+     * @coversDefaultClass \Kicaj\Schema\Cmd\ExportCmd
      *
      * @author Rafal Zajac <rzajac@gmail.com>
      */
@@ -40,7 +40,7 @@ namespace Kicaj\Test\Schema {
         protected $app;
 
         /**
-         * @var ExportCommand
+         * @var ExportCmd
          */
         protected $cmd;
 
@@ -51,7 +51,7 @@ namespace Kicaj\Test\Schema {
 
         protected function setUp()
         {
-            $this->cmd = new ExportCommand();
+            $this->cmd = new ExportCmd();
             $this->app = new Application();
             $this->app->add($this->cmd);
 

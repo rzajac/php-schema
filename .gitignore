@@ -1,5 +1,4 @@
-coverage
-.idea
-vendor
-tmp
-db_config.json
+coverage/
+.idea/
+vendor/
+tmp/

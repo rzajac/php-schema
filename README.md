@@ -1,6 +1,6 @@
 ## Database schema
 
-Library and command line tool for exporting and examining database schemas.
+Library and command line tool for exporting and examining database schema.
 
 ## Supported databases
 
@@ -10,19 +10,17 @@ At the moment only MySQL is supported.
 
 There are two export modes:
 
-- **php_file** - creates includable PHP file with $createStatements associative array where keys are table names and values are SQL CREATE statements.
-- **sql** - creates file with CREATE statements for all tables in given database.
+- **php_file** - creates includable PHP file with $createStatements associative array where keys are table or view names and values are SQL CREATE statements.
+- **sql** - creates file with SQL CREATE statements for all tables and views in given database.
 
 When used as a library there is additional export type:
 
-- **php_array** - returns PHP array with create statements to the caller.
+- **php_array** - returns to the caller the same array as in **php_file** mode.
 
 This tool also rewrites create statements it in following way:
 
 - resets AUTO_INCREMENT to 1
 - adds CREATE TABLE IF NOT EXISTS (configurable)
-- adds DROP TABLE IF EXISTS (configurable)
-
 
 ## Installation
 
@@ -31,7 +29,7 @@ To use as a library add this to `composer.json`:
 ```json
 {
     "require": {
-        "rzajac/schema": "0.6.*"
+        "rzajac/schema": "^0.8"
     }
 }
 ```
@@ -77,13 +75,13 @@ Help:
     "database": "test",
     "driver": "mysql"
   },
-  "export_type": "php_array",
+  "export_format": "php_array",
   "add_if_not_exists": true,
   "output_file": "tmp/schema.php"
 }
 ```
 
-- **export_type** - export create statements as: _php_file_, _php_array_, _sql_.
+- **export_format** - export create statements as: _php_file_, _php_array_, _sql_.
 - **add_if_not_exists** - add IF NOT EXISTS to SQL create statements. 
 
 Database `connection` spec can be found [here](https://github.com/rzajac/phptools/blob/master/src/Db/DbConnect.php)
@@ -92,32 +90,31 @@ Database `connection` spec can be found [here](https://github.com/rzajac/phptool
  
 ```php
 // Config in the same format as above
-$schema = SchemaFactory::make($dbConfig);
+$db = Db::factory($dbConfig);
  
-// Get create statements
-$tableCreateStatement = $schema->dbGetCreateStatement('tableName');
+// Get table.
+$table = $db->dbGetTableDefinition('tableName');
  
-// Get see TableDefinition class
-$tableDefinition = $schema->dbGetTableDefinition('tableName'); 
+// Get get create statement.
+$createStatement = $table->getCreateStatement();
+ 
+// Other examples.
+
+$columns = $table->getColumns();
+$indexes = $table->getIndexes();
+
+$column = $table->getColumnByName('id');
+
+$column->isAutoincrement();
+$column->isPartOfPk();
+
 ```
 
-See [TableDefinition](src/TableDefinition.php) class.
-
-Class documentation can be found [here](docs/index.md).
-
-## Where this script can be used
-
-You could use it in unit tests. The tool exports the CREATE statements as includable PHP file. 
-The file contains an associative array where keys are database table names and values are CREATE statements.
-See [http://someguyjeremy.com/blog/database-testing-with-phpunit](http://someguyjeremy.com/blog/database-testing-with-phpunit) 
-where Jeremy Harris shows how you can load fixtures just for specific tables in your tests.
-
-## Also see
-
-If you like to keep your database schema and data in sync across many instances take a 
-look at my schema sync project [https://github.com/rzajac/dbupdate](https://github.com/rzajac/dbupdate).
+For more info see documentation [here](docs/index.md).
 
 ## Running unit tests
+
+Create test table and user:
 
 ```sql
 CREATE USER 'testUser'@'localhost' IDENTIFIED BY 'testUserPass';
@@ -125,6 +122,14 @@ CREATE USER 'testUser'@'localhost' IDENTIFIED BY 'testUserPass';
 CREATE DATABASE testSchemaLib DEFAULT CHARACTER SET = 'utf8';
 GRANT CREATE ROUTINE, CREATE VIEW, ALTER, SHOW VIEW, CREATE, ALTER ROUTINE, EVENT, INSERT, SELECT, DELETE, TRIGGER, GRANT OPTION, REFERENCES, UPDATE, DROP, EXECUTE, LOCK TABLES, CREATE TEMPORARY TABLES, INDEX ON `testSchemaLib`.* TO 'testUser'@'localhost';
 ```
+
+Run tests:
+
+```
+$ vendor/bin/phpunit
+```
+
+When you have XDebug enabled running unit tests creates coverage report in `coverage` directory.
 
 ## License
 

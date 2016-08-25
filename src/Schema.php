@@ -17,9 +17,8 @@
  */
 namespace Kicaj\Schema;
 
-use Kicaj\Schema\Database\SchemaFactory;
-use Kicaj\DbKit\DatabaseException;
 use Kicaj\Tools\Helper\Arr;
+use Kicaj\Tools\Helper\Str;
 
 /**
  * Schema.
@@ -58,23 +57,6 @@ class Schema
     /** Configuration key for output file path. */
     const CONFIG_KEY_OUTPUT_FILE = 'output_file';
 
-    /** PHP types. */
-    const PHP_TYPE_INT = 'int';
-    const PHP_TYPE_STRING = 'string';
-    const PHP_TYPE_FLOAT = 'float';
-    const PHP_TYPE_BOOL = 'bool';
-    const PHP_TYPE_BINARY = 'binary';
-    const PHP_TYPE_ARRAY = 'array';
-    const PHP_TYPE_DATE = 'date';
-    const PHP_TYPE_DATETIME = 'datetime';
-    const PHP_TYPE_TIMESTAMP = 'timestamp';
-    const PHP_TYPE_TIME = 'time';
-    const PHP_TYPE_YEAR = 'year';
-
-    const COLUMN_UNSIGNED = 'unsigned';
-    const COLUMN_NOT_NULL = 'not null';
-    const COLUMN_AUTOINCREMENT = 'autoincrement';
-
     /**
      * Schema export configuration.
      *
@@ -83,24 +65,23 @@ class Schema
     protected $config;
 
     /**
-     * Database driver.
+     * Database.
      *
-     * @var SchemaGetter
+     * @var Db
      */
-    private $dbDrv;
+    private $db;
 
     /**
      * Constructor.
      *
      * @throws SchemaException
-     * @throws DatabaseException
      *
      * @param array $dbConfig The database configuration.
      */
     public function __construct(array $dbConfig)
     {
         $this->config = $dbConfig;
-        $this->dbDrv = SchemaFactory::factory($dbConfig, true);
+        $this->db = Db::factory($dbConfig);
     }
 
     /**
@@ -109,7 +90,6 @@ class Schema
      * @param array $dbConfig The database configuration
      *
      * @throws SchemaException
-     * @throws DatabaseException
      *
      * @return Schema
      */
@@ -135,15 +115,6 @@ class Schema
      *
      * @param string $format The format of the file: self::FORMAT_*
      *
-     * When returning array the keys are table names and values are an
-     * array with keys:
-     *
-     *   - create - CREATE TABLE or VIEW statement
-     *   - drop   - DROP TABLE statement
-     *   - type   - table, view ( one of the self::CREATE_TYPE_* )
-     *   - name   - table name
-     *
-     * @throws DatabaseException
      * @throws SchemaException
      *
      * @return array|string
@@ -151,12 +122,20 @@ class Schema
     public function getCreateStatements($format = null)
     {
         $exportType = Arr::get($this->config, self::CONFIG_KEY_EXPORT_FORMAT);
+
+        // Override format from config.
         if ($format != null) {
             $exportType = $format;
         }
 
         $aine = Arr::get($this->config, self::CONFIG_KEY_AINE, false);
-        $createStatements = $this->dbDrv->dbGetCreateStatements($aine);
+
+        $createStatements = [];
+        $tableNames = array_merge($this->db->dbGetTableNames(), $this->db->dbGetViewNames());
+        foreach ($tableNames as $tableName) {
+            $table = $this->db->dbGetTableDefinition($tableName);
+            $createStatements[$table->getName()] = $table->getCreateStatement($aine);
+        }
 
         $ret = null;
 
@@ -167,13 +146,15 @@ class Schema
                 break;
 
             case self::FORMAT_PHP_FILE:
+                $createStatements = array_map(['\Kicaj\Tools\Helper\Str', 'oneLine'], $createStatements);
                 $configArray = var_export($createStatements, true);
                 $ret = "<?php\n\n" . '$createStatements = ' . $configArray . ";\n\n";
                 $ret .= 'return $createStatements;' . "\n";
                 break;
 
             case self::FORMAT_SQL:
-                $ret = implode("\n\n", array_values($createStatements)) . "\n";
+                $createStatements = array_map(['\Kicaj\Tools\Helper\Str', 'oneLine'], array_values($createStatements));
+                $ret = implode("\n", array_values($createStatements)) . "\n";
                 break;
 
             default:

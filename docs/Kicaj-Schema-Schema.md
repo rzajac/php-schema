@@ -21,20 +21,6 @@ const CONFIG_KEY_CONNECTION = 'connection';
 const CONFIG_KEY_EXPORT_FORMAT = 'export_format';
 const CONFIG_KEY_AINE = 'add_if_not_exists';
 const CONFIG_KEY_OUTPUT_FILE = 'output_file';
-const PHP_TYPE_INT = 'int';
-const PHP_TYPE_STRING = 'string';
-const PHP_TYPE_FLOAT = 'float';
-const PHP_TYPE_BOOL = 'bool';
-const PHP_TYPE_BINARY = 'binary';
-const PHP_TYPE_ARRAY = 'array';
-const PHP_TYPE_DATE = 'date';
-const PHP_TYPE_DATETIME = 'datetime';
-const PHP_TYPE_TIMESTAMP = 'timestamp';
-const PHP_TYPE_TIME = 'time';
-const PHP_TYPE_YEAR = 'year';
-const COLUMN_UNSIGNED = 'unsigned';
-const COLUMN_NOT_NULL = 'not null';
-const COLUMN_AUTOINCREMENT = 'autoincrement';
 ```
 
 ## Methods
@@ -47,7 +33,7 @@ const COLUMN_AUTOINCREMENT = 'autoincrement';
 
 |                      |                      |
 | -------------------- | -------------------- |
-|  [$config](#config)  |   [$dbDrv](#dbdrv)   |
+|  [$config](#config)  |      [$db](#db)      |
 
 -------
 
@@ -69,8 +55,7 @@ Arguments:
 - _$dbConfig_ **array** - The database configuration.
 
 Throws:
-- [Kicaj\Schema\SchemaException](Kicaj-Schema-SchemaException.md), 
-- Kicaj\DbKit\DatabaseException
+- [Kicaj\Schema\SchemaException](Kicaj-Schema-SchemaException.md)
 
 -------
 #### make
@@ -82,8 +67,7 @@ Arguments:
 - _$dbConfig_ **array** - The database configuration
 
 Throws:
-- [Kicaj\Schema\SchemaException](Kicaj-Schema-SchemaException.md), 
-- Kicaj\DbKit\DatabaseException
+- [Kicaj\Schema\SchemaException](Kicaj-Schema-SchemaException.md)
 
 Returns: **[Kicaj\Schema\Schema](Kicaj-Schema-Schema.md)**
 
@@ -106,17 +90,8 @@ public function getCreateStatements(string $format) : array|string
 ```
 Arguments:
 - _$format_ **string** - The format of the file: self::FORMAT_*
-When returning array the keys are table names and values are an
-array with keys:
-
-create - CREATE TABLE or VIEW statement
-drop   - DROP TABLE statement
-type   - table, view ( one of the self::CREATE_TYPE_* )
-name   - table name
-
 
 Throws:
-- Kicaj\DbKit\DatabaseException, 
 - [Kicaj\Schema\SchemaException](Kicaj-Schema-SchemaException.md)
 
 Returns: **array|string**

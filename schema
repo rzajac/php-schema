@@ -18,7 +18,7 @@
  */
 
 // Require composer autoload file
-use Kicaj\Schema\ExportCommand;
+use Kicaj\Schema\Cmd\ExportCmd;
 use Symfony\Component\Console\Application;
 
 foreach (
@@ -36,10 +36,11 @@ foreach (
 
 /** @var Composer\Autoload\ClassLoader $classLoader */
 
-$exportCmd = new ExportCommand();
+$exportCmd = new ExportCmd();
 
 $application = new Application();
-$application->setName('Database schema exporter');
-$application->setVersion('0.7.6');
+$application->setName('Database schema exporter.');
+$application->setVersion('0.8.0');
 $application->add($exportCmd);
+$application->setDefaultCommand('export');
 $application->run();
