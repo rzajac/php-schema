@@ -131,6 +131,20 @@ final class Db
         return $this->dbDriver->dbGetTableDefinition($tableName);
     }
 
+    /**
+     * Initialize table from create statement.
+     *
+     * @param string $tableCS The table create statement.
+     *
+     * @throws SchemaException
+     *
+     * @return TableItf
+     */
+    public function initTable($tableCS)
+    {
+        return $this->dbDriver->initTable($tableCS);
+    }
+
     // @codeCoverageIgnoreStart
     /**
      * Reset instances cache.

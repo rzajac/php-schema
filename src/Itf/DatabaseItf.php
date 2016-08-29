@@ -50,7 +50,20 @@ interface DatabaseItf
      *
      * @param string $tableName The database table name.
      *
+     * @throws SchemaException
+     *
      * @return TableItf
      */
     public function dbGetTableDefinition($tableName);
+
+    /**
+     * Initialize table from create statement.
+     *
+     * @param string $tableCS The table create statement.
+     *
+     * @throws SchemaException
+     *
+     * @return TableItf
+     */
+    public function initTable($tableCS);
 }

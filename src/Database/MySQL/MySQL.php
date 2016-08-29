@@ -189,10 +189,15 @@ class MySQL implements DbConnector, DatabaseItf
         } elseif (array_key_exists('Create View', $createStatement)) {
             $key = 'Create View';
         } else {
-            throw new SchemaException('Was not able to figure out create statement for: '. $tableName);
+            throw new SchemaException('Was not able to figure out create statement for: ' . $tableName);
         }
 
         return new Table($createStatement[$key], $this);
+    }
+
+    public function initTable($tableCS)
+    {
+        return new Table($tableCS, $this);
     }
 
     /**
