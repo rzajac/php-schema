@@ -106,6 +106,16 @@ class Constraint_Test extends BaseTest
                 ],
             ],
             // 2 --------------------------------------------------------------------
+            [
+                "CONSTRAINT `FKC4E45CCB7609BAD5` FOREIGN KEY (`some_id`) REFERENCES `some_table` (`id`),",
+                [
+                    'name'     => 'FKC4E45CCB7609BAD5',
+                    'key_name' => 'some_id',
+                    'f_table'  => 'some_table',
+                    'f_index'  => 'id',
+                ],
+            ],
+            // XX --------------------------------------------------------------------
         ];
     }
 

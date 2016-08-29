@@ -94,7 +94,7 @@ class Constraint implements ConstraintItf
      */
     protected function parseConstraint()
     {
-        preg_match('/(?:.*)?CONSTRAINT `(.*?)` FOREIGN KEY \(`(.*?)`\) REFERENCES `(.*?)` \(`(.*?)`\) (?:.*)/', $this->constDef, $matches);
+        preg_match('/(?:.*)?CONSTRAINT `(.*?)` FOREIGN KEY \(`(.*?)`\) REFERENCES `(.*?)` \(`(.*?)`\)(?: .*)?/', $this->constDef, $matches);
 
         if (count($matches) != 5) {
             throw new SchemaException('Cannot parse index constraint: ' . $this->constDef);
