@@ -4,7 +4,7 @@
   "src": "src",
   "project_name": "Schema",
   "exclude": [
-    "Kicaj\\Schema\\Database\\Driver\\MySQL",
-    "Kicaj\\Schema\\ExportCommand"
+    "Kicaj\\Schema\\Database\\MySQL",
+    "Kicaj\\Schema\\Cmd"
   ]
 }

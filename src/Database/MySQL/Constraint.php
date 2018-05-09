@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -18,8 +18,9 @@
 namespace Kicaj\Schema\Database\MySQL;
 
 use Kicaj\Schema\Itf\ConstraintItf;
+use Kicaj\Schema\Itf\IndexItf;
 use Kicaj\Schema\Itf\TableItf;
-use Kicaj\Schema\SchemaException;
+use Kicaj\Schema\SchemaEx;
 use Kicaj\Tools\Helper\Str;
 
 /**
@@ -39,7 +40,7 @@ class Constraint implements ConstraintItf
     /**
      * The table the index constraint belongs to.
      *
-     * @var Table
+     * @var TableItf
      */
     protected $table;
 
@@ -77,9 +78,9 @@ class Constraint implements ConstraintItf
      * @param string   $constDef The index constraint definition.
      * @param TableItf $table    The table index constraint belongs to.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      */
-    public function __construct($constDef, TableItf $table)
+    public function __construct(string $constDef, TableItf $table)
     {
         $this->constDef = $constDef;
         $this->table = $table;
@@ -90,14 +91,14 @@ class Constraint implements ConstraintItf
     /**
      * Parse index constraint.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      */
     protected function parseConstraint()
     {
         preg_match('/(?:.*)?CONSTRAINT `(.*?)` FOREIGN KEY \(`(.*?)`\) REFERENCES `(.*?)` \(`(.*?)`\)(?: .*)?/', $this->constDef, $matches);
 
         if (count($matches) != 5) {
-            throw new SchemaException('Cannot parse index constraint: ' . $this->constDef);
+            throw new SchemaEx('Cannot parse index constraint: ' . $this->constDef);
         }
 
         $this->name = trim($matches[1]);
@@ -113,7 +114,7 @@ class Constraint implements ConstraintItf
      *
      * @return bool
      */
-    public static function isConstraintDef($line)
+    public static function isConstraintDef(string $line): bool
     {
         if (Str::startsWith($line, 'CONSTRAINT')) {
             return true;
@@ -122,7 +123,7 @@ class Constraint implements ConstraintItf
         return false;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -132,33 +133,33 @@ class Constraint implements ConstraintItf
      *
      * @return string
      */
-    public function getForeignKeyName()
+    public function getForeignKeyName(): string
     {
         return $this->fKeyName;
     }
 
-    public function getIndex()
+    public function getIndex(): IndexItf
     {
         try {
             $index = $this->table->getIndexByName($this->name);
-        } catch (SchemaException $e) {
+        } catch (SchemaEx $e) {
             $index = $this->table->getIndexByName($this->fKeyName);
         }
 
         return $index;
     }
 
-    public function getForeignTableName()
+    public function getForeignTableName(): string
     {
         return $this->fTableName;
     }
 
-    public function getForeignIndexName()
+    public function getForeignIndexName(): string
     {
         return $this->fIndexName;
     }
 
-    public function getTable()
+    public function getTable(): TableItf
     {
         return $this->table;
     }

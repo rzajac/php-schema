@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -21,7 +21,7 @@ namespace Kicaj\Test\Schema {
     use Kicaj\Schema\Cmd\ExportCmd;
     use Kicaj\Schema\Schema;
     use Kicaj\Test\Helper\TestCase\FixtureTestCase;
-    use Kicaj\DbKit\DbConnector;
+    use Kicaj\Schema\Database\DbConnector;
     use Symfony\Component\Console\Application;
     use Symfony\Component\Console\Tester\CommandTester;
 
@@ -67,6 +67,8 @@ namespace Kicaj\Test\Schema {
 
         /**
          * @covers ::checkDbPassword
+         *
+         * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
          */
         public function test_checkDbPassword()
         {
@@ -83,6 +85,8 @@ namespace Kicaj\Test\Schema {
         /**
          * @covers ::checkDbPassword
          * @covers ::askDbPassword
+         *
+         * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
          */
         public function test_checkDbPassword_missing()
         {

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -73,14 +73,14 @@ abstract class DbColumn implements ColumnItf
      *
      * @var bool
      */
-    protected $isUnsigned;
+    protected $isUnsigned = false;
 
     /**
      * Is column marked as autoincrement.
      *
      * @var bool
      */
-    protected $isAutoincrement;
+    protected $isAutoincrement = false;
 
     /**
      * Is column part of the primary key.
@@ -148,37 +148,37 @@ abstract class DbColumn implements ColumnItf
      */
     protected $validValues;
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getPosition()
+    public function getPosition(): int
     {
         return $this->index;
     }
 
-    public function getTable()
+    public function getTable(): TableItf
     {
         return $this->table;
     }
 
-    public function isUnsigned()
+    public function isUnsigned(): bool
     {
         return $this->isUnsigned;
     }
 
-    public function isNullAllowed()
+    public function isNullAllowed(): bool
     {
         return $this->isNullAllowed;
     }
 
-    public function isAutoincrement()
+    public function isAutoincrement(): bool
     {
         return $this->isAutoincrement;
     }
 
-    public function isPartOfPk()
+    public function isPartOfPk(): bool
     {
         return $this->isPartOfPk;
     }
@@ -188,7 +188,7 @@ abstract class DbColumn implements ColumnItf
         return $this->defaultValue;
     }
 
-    public function getPhpType()
+    public function getPhpType(): string
     {
         return $this->typeMap[$this->dbType];
     }
@@ -213,7 +213,7 @@ abstract class DbColumn implements ColumnItf
         return $this->maxLength;
     }
 
-    public function getDbType()
+    public function getDbType(): string
     {
         return $this->dbType;
     }

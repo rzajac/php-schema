@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -20,7 +20,7 @@ namespace Kicaj\Test\Schema;
 
 use Kicaj\Schema\Cmd\ExportCmd;
 use Kicaj\Schema\Schema;
-use Kicaj\DbKit\DbConnector;
+use Kicaj\Schema\Database\DbConnector;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use Symfony\Component\Console\Application;
@@ -102,8 +102,6 @@ class ExportCommand_Test extends BaseTest
     {
         return [
             ['', getcwd() . '/db_config.json'],
-            [false, getcwd() . '/db_config.json'],
-            [null, getcwd() . '/db_config.json'],
             ['aaa/bbb/db_config.json', 'aaa/bbb/db_config.json'],
         ];
     }
@@ -136,6 +134,8 @@ class ExportCommand_Test extends BaseTest
 
     /**
      * @covers ::readConfigFile
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_readConfigFile()
     {
@@ -215,6 +215,8 @@ class ExportCommand_Test extends BaseTest
 
     /**
      * @covers ::amendAndValidateConfig
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_amendAndValidateConfig()
     {
@@ -235,6 +237,8 @@ class ExportCommand_Test extends BaseTest
 
     /**
      * @covers ::getOutputFilePath
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_getOutputFilePath_ok()
     {
@@ -328,6 +332,8 @@ class ExportCommand_Test extends BaseTest
 
     /**
      * @covers ::checkDbPassword
+     *
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
      */
     public function test_checkDbPassword()
     {
@@ -343,6 +349,9 @@ class ExportCommand_Test extends BaseTest
 
     /**
      * @covers ::execute
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
      */
     public function test_execute_php()
     {
@@ -373,6 +382,9 @@ class ExportCommand_Test extends BaseTest
 
     /**
      * @covers ::execute
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
      */
     public function test_execute_sql()
     {

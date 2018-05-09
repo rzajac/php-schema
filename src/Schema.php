@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -18,7 +18,6 @@
 namespace Kicaj\Schema;
 
 use Kicaj\Tools\Helper\Arr;
-use Kicaj\Tools\Helper\Str;
 
 /**
  * Schema.
@@ -74,7 +73,7 @@ class Schema
     /**
      * Constructor.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @param array $dbConfig The database configuration.
      */
@@ -89,11 +88,11 @@ class Schema
      *
      * @param array $dbConfig The database configuration
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return Schema
      */
-    public static function make(array $dbConfig)
+    public static function make(array $dbConfig): Schema
     {
         return new static($dbConfig);
     }
@@ -105,7 +104,7 @@ class Schema
      *
      * @return bool
      */
-    public static function isValidFormat($format)
+    public static function isValidFormat(string $format): bool
     {
         return in_array($format, [self::FORMAT_PHP_ARRAY, self::FORMAT_PHP_FILE, self::FORMAT_SQL]);
     }
@@ -115,7 +114,7 @@ class Schema
      *
      * @param string $format The format of the file: self::FORMAT_*
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return array|string
      */
@@ -148,7 +147,7 @@ class Schema
             case self::FORMAT_PHP_FILE:
                 $createStatements = array_map(['\Kicaj\Tools\Helper\Str', 'oneLine'], $createStatements);
                 $configArray = var_export($createStatements, true);
-                $ret = "<?php\n\n" . '$createStatements = ' . $configArray . ";\n\n";
+                $ret = "<?php declare(strict_types=1);\n\n" . '$createStatements = ' . $configArray . ";\n\n";
                 $ret .= 'return $createStatements;' . "\n";
                 break;
 
@@ -158,7 +157,7 @@ class Schema
                 break;
 
             default:
-                throw new SchemaException('unknown format: ' . $exportType);
+                throw new SchemaEx('unknown format: ' . $exportType);
         }
 
         return $ret;

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -17,6 +17,8 @@
 
 namespace Kicaj\Schema\Itf;
 
+use Kicaj\Schema\SchemaEx;
+
 /**
  * Database table index interface.
  *
@@ -34,14 +36,14 @@ interface IndexItf
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Get index type.
      *
      * @return string The one of IndexItf::INDEX_* constants.
      */
-    public function getType();
+    public function getType(): string;
 
     /**
      * Return columns this index is composed of.
@@ -52,14 +54,16 @@ interface IndexItf
      *
      * columnName => ColumnItf
      *
+     * @throws SchemaEx
+     *
      * @return ColumnItf[]
      */
-    public function getColumns();
+    public function getColumns(): array;
 
     /**
      * Return table this index belongs to.
      *
      * @return TableItf
      */
-    public function getTable();
+    public function getTable(): TableItf;
 }

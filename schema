@@ -1,5 +1,5 @@
 #!/usr/bin/env php
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -43,4 +43,6 @@ $application->setName('Database schema exporter.');
 $application->setVersion('0.8.0');
 $application->add($exportCmd);
 $application->setDefaultCommand('export');
+
+/** @noinspection PhpUnhandledExceptionInspection */
 $application->run();

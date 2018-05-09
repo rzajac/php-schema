@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -19,7 +19,7 @@ namespace Kicaj\Schema\Database\MySQL;
 
 use Kicaj\Schema\DbIndex;
 use Kicaj\Schema\Itf\TableItf;
-use Kicaj\Schema\SchemaException;
+use Kicaj\Schema\SchemaEx;
 use Kicaj\Tools\Helper\Str;
 
 /**
@@ -35,9 +35,9 @@ class Index extends DbIndex
      * @param string   $indexDef The index definition.
      * @param TableItf $table    The table index belongs to.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      */
-    public function __construct($indexDef, TableItf $table)
+    public function __construct(string $indexDef, TableItf $table)
     {
         $this->indexDef = $indexDef;
         $this->table = $table;
@@ -48,14 +48,14 @@ class Index extends DbIndex
     /**
      * Parse index definition.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      */
     protected function parseIndexDef()
     {
         preg_match('/(.*)?KEY (?:`(.*?)` )?\((.*)\)/', $this->indexDef, $matches);
 
         if (count($matches) != 4) {
-            throw new SchemaException('Cannot parse index definition: ' . $this->indexDef);
+            throw new SchemaEx('Cannot parse index definition: ' . $this->indexDef);
         }
 
         $this->type = trim($matches[1]) ?: 'KEY';
@@ -73,7 +73,7 @@ class Index extends DbIndex
      *
      * @return bool
      */
-    public static function isIndexDef($line)
+    public static function isIndexDef(string $line): bool
     {
         if (Str::startsWith($line, 'PRIMARY KEY')) {
             return true;

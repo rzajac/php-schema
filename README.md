@@ -29,7 +29,7 @@ To use as a library add this to `composer.json`:
 ```json
 {
     "require": {
-        "rzajac/schema": "^0.8"
+        "rzajac/schema": "^0.9"
     }
 }
 ```
@@ -71,7 +71,7 @@ Help:
     "username": "testUser",
     "password": "testUserPass",
     "host": "localhost",
-    "port": "3306",
+    "port": 3306,
     "database": "test",
     "driver": "mysql"
   },

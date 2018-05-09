@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -79,22 +79,22 @@ abstract class DbIndex implements IndexItf
      */
     protected $columns = [];
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    public function getTable()
+    public function getTable(): TableItf
     {
         return $this->table;
     }
 
-    public function getColumns()
+    public function getColumns(): array
     {
         if (!$this->columns) {
             foreach ($this->columnNames as $colName) {
@@ -113,7 +113,7 @@ abstract class DbIndex implements IndexItf
      *
      * @return string[]
      */
-    public function getColumnNames()
+    public function getColumnNames(): array
     {
         return $this->columnNames;
     }

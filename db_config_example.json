@@ -3,7 +3,7 @@
     "username": "testUser",
     "password": "testUserPass",
     "host": "localhost",
-    "port": "3306",
+    "port": 3306,
     "database": "test",
     "driver": "mysql"
   },

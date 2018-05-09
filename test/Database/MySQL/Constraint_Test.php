@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -40,10 +40,14 @@ class Constraint_Test extends BaseTest
 
     protected function setUp()
     {
-        $this->tableMock = $this->getMock(TableItf::class);
+        $this->tableMock = $this->getMockBuilder(TableItf::class)->getMock();
         $this->tableMock->method('getName')->willReturn('table1');
     }
 
+    /**
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
+     */
     public static function setUpBeforeClass()
     {
         self::dbDropAllTables('SCHEMA1');
@@ -66,6 +70,8 @@ class Constraint_Test extends BaseTest
      *
      * @param string $constraintDef
      * @param array  $expected
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_parseConstraint($constraintDef, $expected)
     {
@@ -122,7 +128,7 @@ class Constraint_Test extends BaseTest
     /**
      * @covers ::parseConstraint
      *
-     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaEx
      * @expectedExceptionMessage Cannot parse index constraint: bad constraint
      */
     public function test_parseConstraint_error()

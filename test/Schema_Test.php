@@ -1,10 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Kicaj\Test\Schema;
 
 use Kicaj\Schema\Db;
 use Kicaj\Schema\Schema;
-use Kicaj\Tools\Helper\Str;
 
 /**
  * Schema tests.
@@ -20,6 +19,9 @@ class Schema_Test extends BaseTest
      */
     protected $schema;
 
+    /**
+     * @throws \Kicaj\Schema\SchemaEx
+     */
     public function setUp()
     {
         Db::_resetInstances();
@@ -29,6 +31,8 @@ class Schema_Test extends BaseTest
     /**
      * @covers ::make
      * @covers ::__construct
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test___construct()
     {
@@ -42,7 +46,7 @@ class Schema_Test extends BaseTest
     /**
      * @covers ::__construct
      *
-     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaEx
      * @expectedExceptionMessageRegExp /Access denied for user/
      */
     public function test___construct_error()
@@ -85,6 +89,10 @@ class Schema_Test extends BaseTest
 
     /**
      * @covers ::getCreateStatements
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_getCreateStatements_phpArray()
     {
@@ -106,6 +114,10 @@ class Schema_Test extends BaseTest
 
     /**
      * @covers ::getCreateStatements
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_getCreateStatements_phpFile()
     {
@@ -125,6 +137,10 @@ class Schema_Test extends BaseTest
 
     /**
      * @covers ::getCreateStatements
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_getCreateStatements_sql()
     {
@@ -144,7 +160,7 @@ class Schema_Test extends BaseTest
     /**
      * @covers ::getCreateStatements
      *
-     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaEx
      * @expectedExceptionMessage unknown format: unknown
      */
     public function test_getCreateStatements_unknown()

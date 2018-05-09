@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -42,49 +42,49 @@ interface ColumnItf
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Return table this column belongs to.
      *
      * @return TableItf
      */
-    public function getTable();
+    public function getTable(): TableItf;
 
     /**
      * Returns 0 based position of column in the table.
      *
      * @return int
      */
-    public function getPosition();
+    public function getPosition(): int;
 
     /**
      * Is column set as unsigned.
      *
      * @return bool
      */
-    public function isUnsigned();
+    public function isUnsigned(): bool;
 
     /**
      * Is null value allowed for the column.
      *
      * @return bool
      */
-    public function isNullAllowed();
+    public function isNullAllowed(): bool;
 
     /**
      * Is column set as autoincrement.
      *
      * @return bool
      */
-    public function isAutoincrement();
+    public function isAutoincrement(): bool;
 
     /**
      * Is column part of primary key for the table.
      *
      * @return bool
      */
-    public function isPartOfPk();
+    public function isPartOfPk(): bool;
 
     /**
      * Return default value for the column.
@@ -98,7 +98,7 @@ interface ColumnItf
      *
      * @return string One of the ColumnItf::PHP_TYPE_* constants.
      */
-    public function getPhpType();
+    public function getPhpType(): string;
 
     /**
      * Return minimum value the column may have.
@@ -141,14 +141,14 @@ interface ColumnItf
      *
      * @return string The one of \Kicaj\DbKit\DbConnector::DB_DRIVER_* constants.
      */
-    public function getDriverName();
+    public function getDriverName(): string;
 
     /**
      * Get the database specific type of this column.
      *
      * @return string
      */
-    public function getDbType();
+    public function getDbType(): string;
 
     /**
      * Return valid values for the column.

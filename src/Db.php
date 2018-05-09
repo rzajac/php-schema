@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -18,8 +18,8 @@
 namespace Kicaj\Schema;
 
 
-use Kicaj\DbKit\DbConnect;
-use Kicaj\DbKit\DbConnector;
+use Kicaj\Schema\Database\DbConnect;
+use Kicaj\Schema\Database\DbConnector;
 use Kicaj\Schema\Database\MySQL\MySQL;
 use Kicaj\Schema\Itf\DatabaseItf;
 use Kicaj\Schema\Itf\TableItf;
@@ -34,7 +34,7 @@ final class Db
     /**
      * Instances.
      *
-     * @var DbConnector[]
+     * @var Db[]
      */
     private static $instances = [];
 
@@ -50,15 +50,15 @@ final class Db
      *
      * It returns the same instance for the same config.
      *
-     * @see \Kicaj\Tools\Itf\DbConnect
+     * @see \Kicaj\Schema\Database\DbConnect
      *
      * @param array $dbConfig The database configuration.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return Db
      */
-    public static function factory(array $dbConfig)
+    public static function factory(array $dbConfig): Db
     {
         $key = md5(json_encode($dbConfig));
 
@@ -72,7 +72,7 @@ final class Db
                 break;
 
             default:
-                throw new SchemaException('Unknown database driver name: ' . DbConnect::getDriver($dbConfig[Schema::CONFIG_KEY_CONNECTION]));
+                throw new SchemaEx('Unknown database driver name: ' . DbConnect::getDriver($dbConfig[Schema::CONFIG_KEY_CONNECTION]));
         }
 
         $driver->dbSetup($dbConfig[Schema::CONFIG_KEY_CONNECTION])->dbConnect();
@@ -96,11 +96,11 @@ final class Db
     /**
      * Get database table names.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return string[] The table names.
      */
-    public function dbGetTableNames()
+    public function dbGetTableNames(): array
     {
         return $this->dbDriver->dbGetTableNames();
     }
@@ -108,11 +108,11 @@ final class Db
     /**
      * Get database view names.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return string[] The view names.
      */
-    public function dbGetViewNames()
+    public function dbGetViewNames(): array
     {
         return $this->dbDriver->dbGetViewNames();
     }
@@ -122,11 +122,11 @@ final class Db
      *
      * @param string $tableName The database table name.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return TableItf
      */
-    public function dbGetTableDefinition($tableName)
+    public function dbGetTableDefinition(string $tableName): TableItf
     {
         return $this->dbDriver->dbGetTableDefinition($tableName);
     }
@@ -136,11 +136,11 @@ final class Db
      *
      * @param string $tableCS The table create statement.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return TableItf
      */
-    public function initTable($tableCS)
+    public function initTable(string $tableCS): TableItf
     {
         return $this->dbDriver->initTable($tableCS);
     }

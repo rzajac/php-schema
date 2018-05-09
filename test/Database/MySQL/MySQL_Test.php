@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -17,12 +17,11 @@
  */
 namespace Kicaj\Test\Schema\Database\Driver;
 
-use Kicaj\DbKit\DbConnector;
+use Kicaj\Schema\Database\DbConnector;
 use Kicaj\Schema\Database\MySQL\MySQL;
 use Kicaj\Schema\Itf\TableItf;
-use Kicaj\Schema\SchemaException;
+use Kicaj\Schema\SchemaEx;
 use Kicaj\Test\Schema\BaseTest;
-use Kicaj\Tools\Helper\Str;
 
 /**
  * Tests for MySQL driver.
@@ -40,6 +39,9 @@ class MySQL_Test extends BaseTest
      */
     protected $driver;
 
+    /**
+     * @throws \Kicaj\Schema\Database\DbEx
+     */
     public function setUp()
     {
         $this->driver = new MySQL();
@@ -58,8 +60,6 @@ class MySQL_Test extends BaseTest
      * @param string $database
      * @param string $port
      * @param string $errorMsg
-     *
-     * @throws SchemaException
      */
     public function test_connection($host, $username, $password, $database, $port, $errorMsg)
     {
@@ -84,7 +84,7 @@ class MySQL_Test extends BaseTest
             $myMySQL->dbSetup($dbConfig)->dbConnect();
             // Call method that is actually doing something with database.
             $myMySQL->dbGetTableNames();
-        } catch (SchemaException $e) {
+        } catch (SchemaEx $e) {
             $thrown = true;
             $this->assertFalse('' == $errorMsg, 'Did not expect to see error: ' . $e->getMessage());
         } finally {
@@ -122,6 +122,10 @@ class MySQL_Test extends BaseTest
      * @covers ::getTableAndViewNames
      * @covers ::runQuery
      * @covers ::getRowsArray
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
+     * @throws SchemaEx
      */
     public function test_getDbTableNames()
     {
@@ -141,6 +145,10 @@ class MySQL_Test extends BaseTest
      * @covers ::getTableAndViewNames
      * @covers ::runQuery
      * @covers ::getRowsArray
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
+     * @throws SchemaEx
      */
     public function test_dbGetViewNames()
     {
@@ -160,6 +168,10 @@ class MySQL_Test extends BaseTest
      * @covers ::dbGetTableDefinition
      * @covers ::runQuery
      * @covers ::getRowsArray
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
+     * @throws SchemaEx
      */
     public function test_dbGetTableDefinition_table()
     {
@@ -180,6 +192,10 @@ class MySQL_Test extends BaseTest
      * @covers ::dbGetTableDefinition
      * @covers ::runQuery
      * @covers ::getRowsArray
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
+     * @throws SchemaEx
      */
     public function test_dbGetTableDefinition_view()
     {
@@ -201,7 +217,7 @@ class MySQL_Test extends BaseTest
     /**
      * @covers ::dbGetTableDefinition
      *
-     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaEx
      * @expectedExceptionMessage doesn't exist
      */
     public function test_dbGetTableDefinition_err()
@@ -212,8 +228,11 @@ class MySQL_Test extends BaseTest
     /**
      * @covers ::dbGetTableDefinition
      *
-     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaEx
      * @expectedExceptionMessage Was not able to figure out create statement for: test1
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
      */
     public function test_dbGetTableDefinition_unknownType()
     {
@@ -246,7 +265,7 @@ class MySQL_Test extends BaseTest
     /**
      * @covers ::runQuery
      *
-     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaEx
      */
     public function test_runQuery_error()
     {
@@ -255,6 +274,8 @@ class MySQL_Test extends BaseTest
 
     /**
      * @covers ::dbClose
+     *
+     * @throws \Kicaj\Schema\Database\DbEx
      */
     public function test_dbClose_closingTwice()
     {

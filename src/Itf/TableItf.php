@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -17,7 +17,7 @@
 
 namespace Kicaj\Schema\Itf;
 
-use Kicaj\Schema\SchemaException;
+use Kicaj\Schema\SchemaEx;
 
 /**
  * Database table interface.
@@ -40,14 +40,14 @@ interface TableItf
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Return table type.
      *
      * @return string The one of the TableItf::TYPE_* values.
      */
-    public function getType();
+    public function getType(): string;
 
     /**
      * Return table columns.
@@ -56,18 +56,18 @@ interface TableItf
      *
      * @return ColumnItf[]
      */
-    public function getColumns();
+    public function getColumns(): array;
 
     /**
      * Return table column by its name.
      *
      * @param string $columnName The column name.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return ColumnItf
      */
-    public function getColumnByName($columnName);
+    public function getColumnByName(string $columnName): ColumnItf;
 
     /**
      * Get table indexes.
@@ -76,18 +76,18 @@ interface TableItf
      *
      * @return IndexItf[]
      */
-    public function getIndexes();
+    public function getIndexes(): array;
 
     /**
      * Return table index by its name.
      *
      * @param string $indexName The index name.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
-     * @return ColumnItf
+     * @return IndexItf
      */
-    public function getIndexByName($indexName);
+    public function getIndexByName(string $indexName): IndexItf;
 
     /**
      * Return index constraints.
@@ -96,7 +96,7 @@ interface TableItf
      *
      * @return ConstraintItf[]
      */
-    public function getConstraints();
+    public function getConstraints(): array;
 
     /**
      * Get primary key index.
@@ -108,20 +108,20 @@ interface TableItf
     /**
      * Get drop statement for the table.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return string
      */
-    public function getDropStatement();
+    public function getDropStatement(): string;
 
     /**
      * Get create statement for the table.
      *
      * @param bool $addIfNotExists Set to true to add if not exists condition.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return string
      */
-    public function getCreateStatement($addIfNotExists = false);
+    public function getCreateStatement(bool $addIfNotExists = false): string;
 }

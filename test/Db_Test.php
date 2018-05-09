@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -18,9 +18,9 @@
 namespace Kicaj\Test\Schema;
 
 
-use Kicaj\DbKit\DbConnector;
+use Kicaj\Schema\Database\DbConnector;
 use Kicaj\Schema\Db;
-use Kicaj\Schema\SchemaException;
+use Kicaj\Schema\SchemaEx;
 
 /**
  * Db_Test.
@@ -44,8 +44,6 @@ class Db_Test extends BaseTest
      *
      * @param string $driverName
      * @param string $errorMsg
-     *
-     * @throws SchemaException
      */
     public function test_factory($driverName, $errorMsg)
     {
@@ -60,7 +58,7 @@ class Db_Test extends BaseTest
             $db = Db::factory($dbConfig);
             // Call method that is actually doing something with database.
             $db->dbGetTableNames();
-        } catch (SchemaException $e) {
+        } catch (SchemaEx $e) {
             $thrown = true;
             $this->assertFalse('' == $errorMsg, 'Did not expect to see error: ' . $e->getMessage());
         } finally {
@@ -79,7 +77,7 @@ class Db_Test extends BaseTest
     /**
      * @covers ::factory
      *
-     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaEx
      * @expectedExceptionMessage Access denied for user
      */
     public function test_factoryConnErr()
@@ -98,6 +96,8 @@ class Db_Test extends BaseTest
 
     /**
      * @covers ::factory
+     *
+     * @throws SchemaEx
      */
     public function test_factory_sameInstance()
     {
@@ -114,9 +114,9 @@ class Db_Test extends BaseTest
     /**
      * @covers ::dbGetTableNames
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
-     * @throws \Kicaj\DbKit\DatabaseException
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
      *
      * @return Db
      */
@@ -142,11 +142,9 @@ class Db_Test extends BaseTest
      *
      * @param Db $db
      *
-     * @throws SchemaException
-     *
-     * @throws \Kicaj\DbKit\DatabaseException
-     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderException
-     * @throws \Kicaj\Tools\Api\JSONParseException
+     * @throws SchemaEx
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
      *
      * @return Db
      */
@@ -171,7 +169,7 @@ class Db_Test extends BaseTest
      *
      * @param Db $db
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      */
     public function test_dbGetTableDefinition_result($db)
     {
@@ -186,8 +184,8 @@ class Db_Test extends BaseTest
     /**
      * @covers ::dbGetTableNames
      *
-     * @expectedException \Kicaj\Schema\SchemaException
-     * @expectedExceptionMessage Table 'testschemalib.not_existing' doesn't exist
+     * @expectedException \Kicaj\Schema\SchemaEx
+     * @expectedExceptionMessage Table 'testSchemaLib.not_existing' doesn't exist
      */
     public function test_dbGetTableDefinition_error()
     {

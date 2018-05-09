@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -17,7 +17,7 @@
 
 namespace Kicaj\Test\Schema\Database\MySQL;
 
-use Kicaj\DbKit\DbConnector;
+use Kicaj\Schema\Database\DbConnector;
 use Kicaj\Schema\Database\MySQL\Column;
 use Kicaj\Schema\Database\MySQL\MySQL;
 use Kicaj\Schema\Itf\ColumnItf;
@@ -42,7 +42,7 @@ class Column_Test extends BaseTest
 
     protected function setUp()
     {
-        $this->tableMock = $this->getMock(TableItf::class);
+        $this->tableMock = $this->getMockBuilder(TableItf::class)->getMock();
         $this->tableMock->method('getName')->willReturn('table2');
     }
 
@@ -79,6 +79,8 @@ class Column_Test extends BaseTest
      *
      * @param string $columnDef
      * @param array  $expected
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_columnParser($columnDef, array $expected)
     {
@@ -283,9 +285,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_CHAR,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => 0,
                     'max_length'     => 1,
                     'min_value'      => null,
@@ -301,9 +303,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_VARCHAR,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => 0,
                     'max_length'     => 2,
                     'min_value'      => null,
@@ -589,9 +591,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_TINYTEXT,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => 0,
                     'max_length'     => 255,
                     'min_value'      => null,
@@ -607,9 +609,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_TEXT,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => 0,
                     'max_length'     => 65535,
                     'min_value'      => null,
@@ -625,9 +627,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_MEDIUMTEXT,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => 0,
                     'max_length'     => 16777215,
                     'min_value'      => null,
@@ -643,9 +645,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_LONGTEXT,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => 0,
                     'max_length'     => 4294967295,
                     'min_value'      => null,
@@ -661,9 +663,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_TINYBLOB,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => 0,
                     'max_length'     => 255,
                     'min_value'      => null,
@@ -679,9 +681,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_BLOB,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => 0,
                     'max_length'     => 65535,
                     'min_value'      => null,
@@ -697,9 +699,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_LONGBLOB,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => 0,
                     'max_length'     => 4294967295,
                     'min_value'      => null,
@@ -715,9 +717,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_BINARY,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => 0,
                     'max_length'     => 1,
                     'min_value'      => null,
@@ -733,9 +735,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_BINARY,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => 0,
                     'max_length'     => 5,
                     'min_value'      => null,
@@ -751,9 +753,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_VARBINARY,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => 0,
                     'max_length'     => 20,
                     'min_value'      => null,
@@ -769,9 +771,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_DATE,
                     'php_type'       => ColumnItf::PHP_TYPE_DATE,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => '2015-10-20',
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => null,
                     'max_length'     => null,
                     'min_value'      => '1000-01-01',
@@ -787,9 +789,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_DATETIME,
                     'php_type'       => ColumnItf::PHP_TYPE_DATETIME,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => null,
                     'max_length'     => null,
                     'min_value'      => '1000-01-01 00:00:00',
@@ -805,9 +807,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_TIMESTAMP,
                     'php_type'       => ColumnItf::PHP_TYPE_TIMESTAMP,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => null,
                     'max_length'     => null,
                     'min_value'      => 0,
@@ -823,9 +825,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_TIME,
                     'php_type'       => ColumnItf::PHP_TYPE_TIME,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => null,
                     'max_length'     => null,
                     'min_value'      => '00:00:00',
@@ -859,9 +861,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_ENUM,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => 'XS',
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => null,
                     'max_length'     => null,
                     'min_value'      => null,
@@ -877,9 +879,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_SET,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => '0',
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => null,
                     'max_length'     => null,
                     'min_value'      => null,
@@ -949,9 +951,9 @@ class Column_Test extends BaseTest
                     'db_type'        => MySQL::TYPE_MEDIUMBLOB,
                     'php_type'       => ColumnItf::PHP_TYPE_STRING,
                     'allow_null'     => true,
-                    'auto_increment' => null,
+                    'auto_increment' => false,
                     'default_val'    => null,
-                    'unsigned'       => null,
+                    'unsigned'       => false,
                     'min_length'     => 0,
                     'max_length'     => 16777215,
                     'min_value'      => null,
@@ -966,7 +968,7 @@ class Column_Test extends BaseTest
     /**
      * @covers ::parseMySQLType
      *
-     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaEx
      * @expectedExceptionMessage Could not parse type: 1int(11)
      */
     public function test_parseMySQLType_couldNotParse()
@@ -981,7 +983,7 @@ class Column_Test extends BaseTest
     /**
      * @covers ::parseMySQLType
      *
-     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaEx
      * @expectedExceptionMessage Unsupported type: sometype
      */
     public function test_parseMySQLType_unsupportedType()
@@ -996,7 +998,7 @@ class Column_Test extends BaseTest
     /**
      * @covers ::parseAndSetColExtra
      *
-     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaEx
      * @expectedExceptionMessage Could not decipher DEFAULT: unsigned DEFAULT: ---
      */
     public function test_parseAndSetColExtra_badDefault()
@@ -1011,6 +1013,8 @@ class Column_Test extends BaseTest
     /**
      * @covers ::setPartOfPk
      * @covers ::isPartOfPk
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_setPartOfPk()
     {

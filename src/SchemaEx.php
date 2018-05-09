@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -15,6 +15,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 namespace Kicaj\Schema;
 
 use Kicaj\Tools\Exception;
@@ -24,6 +25,6 @@ use Kicaj\Tools\Exception;
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class SchemaException extends Exception
+class SchemaEx extends Exception
 {
 }

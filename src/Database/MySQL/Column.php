@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -17,11 +17,11 @@
 
 namespace Kicaj\Schema\Database\MySQL;
 
-use Kicaj\DbKit\DbConnector;
+use \Kicaj\Schema\Database\DbConnector;
 use Kicaj\Schema\DbColumn;
 use Kicaj\Schema\Itf\ColumnItf;
 use Kicaj\Schema\Itf\TableItf;
-use Kicaj\Schema\SchemaException;
+use Kicaj\Schema\SchemaEx;
 
 /**
  * MySQL column.
@@ -37,9 +37,9 @@ class Column extends DbColumn
      * @param int      $index     The zero based index of the column in the table.
      * @param TableItf $table     The database table this column belongs to.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      */
-    public function __construct($columnDef, $index, TableItf $table)
+    public function __construct(string $columnDef, int $index, TableItf $table)
     {
         $this->columnDef = trim($columnDef);
         $this->index = $index;
@@ -87,7 +87,7 @@ class Column extends DbColumn
     /**
      * Parse database column definition.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      */
     protected function parseColumn()
     {
@@ -121,20 +121,20 @@ class Column extends DbColumn
      *
      * @param string $dbType The database type definition.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return string The one of \Kicaj\Schema\Database\MySQL\MySQL::TYPE_* constants.
      */
-    protected function parseMySQLType($dbType)
+    protected function parseMySQLType(string $dbType): string
     {
         preg_match('/^([a-z]+)(?:\(.*?\))?/', $dbType, $matches);
 
         if (2 != count($matches)) {
-            throw new SchemaException('Could not parse type: ' . $dbType);
+            throw new SchemaEx('Could not parse type: ' . $dbType);
         }
 
         if (!in_array($matches[1], array_keys($this->typeMap))) {
-            throw new SchemaException('Unsupported type: ' . $matches[1]);
+            throw new SchemaEx('Unsupported type: ' . $matches[1]);
         }
 
         return $matches[1];
@@ -145,9 +145,9 @@ class Column extends DbColumn
      *
      * @param string $colDefExtra The extra column definitions.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      */
-    protected function parseAndSetColExtra($colDefExtra)
+    protected function parseAndSetColExtra(string $colDefExtra)
     {
         $this->parseUnsigned($colDefExtra);
 
@@ -164,7 +164,7 @@ class Column extends DbColumn
         if (false !== strpos($colDefExtra, 'DEFAULT')) {
             preg_match('/DEFAULT (.*)/', $colDefExtra, $matches);
             if (2 != count($matches)) {
-                throw new SchemaException('Could not decipher DEFAULT: ' . $colDefExtra);
+                throw new SchemaEx('Could not decipher DEFAULT: ' . $colDefExtra);
             }
             $defaultValue = trim($matches[1]);
             $defaultValue = trim($defaultValue, '\'');
@@ -179,10 +179,8 @@ class Column extends DbColumn
      * Parse extra column definitions.
      *
      * @param string $colDefExtra The extra column definitions.
-     *
-     * @throws SchemaException
      */
-    protected function parseUnsigned($colDefExtra)
+    protected function parseUnsigned(string $colDefExtra)
     {
         if (!$this->isDbNumberType()) {
             return;
@@ -206,7 +204,7 @@ class Column extends DbColumn
      *
      * @return bool
      */
-    protected function isDbNumberType()
+    protected function isDbNumberType(): bool
     {
         // Types that we ignore.
         switch ($this->dbType) {
@@ -231,7 +229,7 @@ class Column extends DbColumn
      *
      * @param string $dbTypeDef The database type definition.
      */
-    protected function setLengthsAndValidValues($dbTypeDef)
+    protected function setLengthsAndValidValues(string $dbTypeDef)
     {
         if ($this->isDbNumberType()) {
             return;
@@ -309,8 +307,6 @@ class Column extends DbColumn
 
     /**
      * Set type bounds.
-     *
-     * @throws SchemaException
      */
     protected function setTypeBounds()
     {
@@ -458,7 +454,7 @@ class Column extends DbColumn
         }
     }
 
-    public function getDriverName()
+    public function getDriverName(): string
     {
         return DbConnector::DB_DRIVER_MYSQL;
     }

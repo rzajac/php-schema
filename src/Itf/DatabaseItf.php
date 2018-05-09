@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -18,7 +18,7 @@
 
 namespace Kicaj\Schema\Itf;
 
-use Kicaj\Schema\SchemaException;
+use Kicaj\Schema\SchemaEx;
 
 /**
  * Interface for getting database schema information.
@@ -30,40 +30,40 @@ interface DatabaseItf
     /**
      * Get database table names.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return string[] The table names.
      */
-    public function dbGetTableNames();
+    public function dbGetTableNames(): array;
 
     /**
      * Get database view names.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return string[] The view names.
      */
-    public function dbGetViewNames();
+    public function dbGetViewNames(): array;
 
     /**
      * Return table definition for given database table.
      *
      * @param string $tableName The database table name.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return TableItf
      */
-    public function dbGetTableDefinition($tableName);
+    public function dbGetTableDefinition(string $tableName): TableItf;
 
     /**
      * Initialize table from create statement.
      *
      * @param string $tableCS The table create statement.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return TableItf
      */
-    public function initTable($tableCS);
+    public function initTable(string $tableCS): TableItf;
 }

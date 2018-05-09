@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -40,7 +40,7 @@ class Index_Test extends BaseTest
 
     protected function setUp()
     {
-        $this->tableMock = $this->getMock(TableItf::class);
+        $this->tableMock = $this->getMockBuilder(TableItf::class)->getMock();
         $this->tableMock->method('getName')->willReturn('table1');
     }
 
@@ -57,6 +57,8 @@ class Index_Test extends BaseTest
      *
      * @param string $indexDef
      * @param array  $expected
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_parseIndex($indexDef, $expected)
     {
@@ -155,7 +157,7 @@ class Index_Test extends BaseTest
     /**
      * @covers ::parseIndexDef
      *
-     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaEx
      * @expectedExceptionMessage Cannot parse index definition: bad index definition
      */
     public function test_parseIndexDef_error()
@@ -165,6 +167,8 @@ class Index_Test extends BaseTest
 
     /**
      * @covers ::getColumnNames
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_getColumnNames()
     {
@@ -180,6 +184,8 @@ class Index_Test extends BaseTest
 
     /**
      * @covers ::getColumnNames
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_getColumnNames_multiple()
     {

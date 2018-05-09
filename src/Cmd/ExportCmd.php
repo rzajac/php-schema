@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -14,12 +14,13 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 namespace Kicaj\Schema\Cmd;
 
+use Kicaj\Schema\Database\DbConnector;
 use Kicaj\Schema\Schema;
+use Kicaj\Schema\SchemaEx;
 use Kicaj\Tools\Cli\Interaction;
-use Kicaj\DbKit\DbConnector;
-use Kicaj\Tools\Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -53,6 +54,14 @@ class ExportCmd extends Command
                  'The path to configuration file. If not set current working directory will be searched for db_config.json');
     }
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @throws \Kicaj\Schema\SchemaEx
+     *
+     * @return int|null|void
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $configPath = $this->getConfigPath($input->getOption('config'));
@@ -74,7 +83,7 @@ class ExportCmd extends Command
      *
      * @return string The path to configuration file.
      */
-    public function getConfigPath($configPath)
+    public function getConfigPath(string $configPath): string
     {
         return $configPath ?: getcwd() . '/db_config.json';
     }
@@ -86,29 +95,30 @@ class ExportCmd extends Command
      *
      * @param string $configPath The path to JSON configuration file.
      *
-     * @throws Exception
+     * @throws SchemaEx
      *
      * @return array
      */
-    public function readConfigFile($configPath)
+    public function readConfigFile(string $configPath): array
     {
         if (!file_exists($configPath)) {
-            throw new Exception(sprintf('Config file %s does not exist.', $configPath));
+            throw new SchemaEx(sprintf('Config file %s does not exist.', $configPath));
         }
 
+
         if (!is_readable($configPath)) {
-            throw new Exception(sprintf('Config file %s is not readable.', $configPath));
+            throw new SchemaEx(sprintf('Config file %s is not readable.', $configPath));
         }
 
         $content = file_get_contents($configPath);
 
         if ('' == $content) {
-            throw new Exception(sprintf('Invalid config %s - empty file.', $configPath, json_last_error_msg()));
+            throw new SchemaEx(sprintf('Invalid config %s - empty file.', $configPath, json_last_error_msg()));
         }
 
         $config = json_decode($content, true);
         if ($config === null) {
-            throw new Exception(sprintf('Invalid config %s - %s.', $configPath, json_last_error_msg()));
+            throw new SchemaEx(sprintf('Invalid config %s - %s.', $configPath, json_last_error_msg()));
         }
 
         $config[self::CONFIG_KEY_PATH] = $configPath;
@@ -125,7 +135,7 @@ class ExportCmd extends Command
      *
      * @return array Fixed configuration array.
      */
-    public function fixOutputFormat(array $config)
+    public function fixOutputFormat(array $config): array
     {
         if ($config[Schema::CONFIG_KEY_EXPORT_FORMAT] === Schema::FORMAT_PHP_ARRAY) {
             $config[Schema::CONFIG_KEY_EXPORT_FORMAT] = Schema::FORMAT_PHP_FILE;
@@ -143,11 +153,11 @@ class ExportCmd extends Command
      *
      * @param array $config The configuration array.
      *
-     * @throws Exception
+     * @throws SchemaEx
      *
      * @return array The amended and validated configuration array.
      */
-    public function amendAndValidateConfig(array $config)
+    public function amendAndValidateConfig(array $config): array
     {
         $configDir = dirname($config[self::CONFIG_KEY_PATH]);
         $outputPath = $config[Schema::CONFIG_KEY_OUTPUT_FILE];
@@ -163,11 +173,11 @@ class ExportCmd extends Command
      * @param string $outputPath    The path where output file should be put. Paths not starting with / are treated
      *                              as relative to config file.
      *
-     * @throws Exception When output file cannot be written.
+     * @throws SchemaEx When output file cannot be written.
      *
      * @return string
      */
-    public function getOutputFilePath($configDir, $outputPath)
+    public function getOutputFilePath(string $configDir, string $outputPath): string
     {
         if ($outputPath[0] !== DIRECTORY_SEPARATOR) {
             $outputPath = $configDir . DIRECTORY_SEPARATOR . $outputPath;
@@ -176,15 +186,15 @@ class ExportCmd extends Command
         $outputDir = dirname($outputPath);
 
         if (!is_dir($outputDir)) {
-            throw new Exception(sprintf('Directory %s does not exist.', $outputDir));
+            throw new SchemaEx(sprintf('Directory %s does not exist.', $outputDir));
         }
 
         if (!is_writable($outputDir)) {
-            throw new Exception(sprintf('Output directory %s is not writable.', $outputDir));
+            throw new SchemaEx(sprintf('Output directory %s is not writable.', $outputDir));
         }
 
         if (file_exists($outputPath) && !is_writable($outputPath)) {
-            throw new Exception(sprintf('Cannot write %s file.', $outputPath));
+            throw new SchemaEx(sprintf('Cannot write %s file.', $outputPath));
         }
 
         return $outputPath;
@@ -197,7 +207,7 @@ class ExportCmd extends Command
      *
      * @return string
      */
-    public function askDbPassword()
+    public function askDbPassword(): string
     {
         return trim(Interaction::getPassword('Enter database password: '));
     }
@@ -205,13 +215,11 @@ class ExportCmd extends Command
     /**
      * Get configuration array.
      *
-     * @todo handle empty passwords
-     *
      * @param array $config The Schema configuration array.
      *
      * @return array The configuration array.
      */
-    public function checkDbPassword($config)
+    public function checkDbPassword(array $config): array
     {
         $password = $config[Schema::CONFIG_KEY_CONNECTION][DbConnector::DB_CFG_PASSWORD];
 

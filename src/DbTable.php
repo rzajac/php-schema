@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -88,47 +88,46 @@ abstract class DbTable implements TableItf
      */
     protected $constraints = [];
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    public function getColumns()
+    public function getColumns(): array
     {
         return $this->columns;
     }
 
-    public function getColumnByName($columnName)
+    public function getColumnByName(string $columnName): ColumnItf
     {
         if (!isset($this->columns[$columnName])) {
-            throw SchemaException::spf('Table %s does not have column %s.', $this->name, $columnName);
+            throw SchemaEx::spf('Table %s does not have column %s.', $this->name, $columnName);
         }
 
         return $this->columns[$columnName];
     }
 
-    public function getIndexes()
+    public function getIndexes(): array
     {
         return $this->indexes;
     }
 
-    public function getIndexByName($indexName)
+    public function getIndexByName(string $indexName): IndexItf
     {
         if (!isset($this->indexes[$indexName])) {
-            throw SchemaException::spf('Table %s does not have index %s.', $this->name, $indexName);
+            throw SchemaEx::spf('Table %s does not have index %s.', $this->name, $indexName);
         }
 
         return $this->indexes[$indexName];
     }
 
-    public function getConstraints()
+    public function getConstraints(): array
     {
         return $this->constraints;
     }
-
 }

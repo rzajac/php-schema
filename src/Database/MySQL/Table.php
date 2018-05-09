@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -23,7 +23,7 @@ use Kicaj\Schema\Itf\ConstraintItf;
 use Kicaj\Schema\Itf\DatabaseItf;
 use Kicaj\Schema\Itf\IndexItf;
 use Kicaj\Schema\Itf\TableItf;
-use Kicaj\Schema\SchemaException;
+use Kicaj\Schema\SchemaEx;
 use Kicaj\Tools\Helper\Str;
 
 /**
@@ -39,9 +39,9 @@ class Table extends DbTable
      * @param string      $tableCS The table create statement.
      * @param DatabaseItf $db      The database interface.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      */
-    public function __construct($tableCS, DatabaseItf $db)
+    public function __construct(string $tableCS, DatabaseItf $db)
     {
         $this->tableCS = $tableCS;
         $this->db = $db;
@@ -52,7 +52,7 @@ class Table extends DbTable
     /**
      * Parse table create statement.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      */
     protected function parseTableCS()
     {
@@ -83,8 +83,6 @@ class Table extends DbTable
      * The addition order is significant.
      *
      * @param ColumnItf $column
-     *
-     * @return TableItf
      */
     public function addColumn(ColumnItf $column)
     {
@@ -95,6 +93,8 @@ class Table extends DbTable
      * Add index definition.
      *
      * @param IndexItf $index
+     *
+     * @throws SchemaEx
      */
     public function addIndex(IndexItf $index)
     {
@@ -118,7 +118,7 @@ class Table extends DbTable
         $this->constraints[$constraint->getName()] = $constraint;
     }
 
-    public function getDropStatement()
+    public function getDropStatement(): string
     {
         $sql = '';
         switch ($this->type) {
@@ -140,7 +140,7 @@ class Table extends DbTable
      *
      * @return string The table create statement.
      */
-    protected function fixCreateStatement($addIfNotExists = false)
+    protected function fixCreateStatement(bool $addIfNotExists = false): string
     {
         $tableCS = '';
         switch ($this->type) {
@@ -163,7 +163,7 @@ class Table extends DbTable
      *
      * @return string The table create statement.
      */
-    protected function fixViewCreateStatement($addIfNotExists = false)
+    protected function fixViewCreateStatement(bool $addIfNotExists = false): string
     {
         $tableCS = $this->tableCS;
 
@@ -185,7 +185,7 @@ class Table extends DbTable
      *
      * @return string The table create statement.
      */
-    protected function fixTableCreateStatement($addIfNotExists = false)
+    protected function fixTableCreateStatement(bool $addIfNotExists = false): string
     {
         $tableCS = $this->tableCS;
 
@@ -199,8 +199,7 @@ class Table extends DbTable
             return $tableCS;
         }
 
-        /* @noinspection SqlNoDataSourceInspection */
-        $tableCS = preg_replace('/CREATE TABLE/', 'CREATE TABLE IF NOT EXISTS', $tableCS);
+        $tableCS = preg_replace('/CREATE TABLE/', 'CREATE TABLE'.' IF NOT EXISTS', $tableCS);
 
         return $tableCS;
     }
@@ -210,7 +209,7 @@ class Table extends DbTable
         return array_key_exists('', $this->indexes) ? $this->indexes[''] : null;
     }
 
-    public function getCreateStatement($addIfNotExists = false)
+    public function getCreateStatement(bool $addIfNotExists = false): string
     {
         return $this->fixCreateStatement($addIfNotExists);
     }

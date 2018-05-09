@@ -15,7 +15,15 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+namespace Kicaj\Schema\Database;
 
-require_once __DIR__ . '/../vendor/autoload.php';
+use Kicaj\Schema\SchemaEx;
 
-
+/**
+ * Database exception.
+ *
+ * @author Rafal Zajac <rzajac@gmail.com>
+ */
+class DbEx extends SchemaEx
+{
+}

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -17,6 +17,8 @@
 
 namespace Kicaj\Schema\Itf;
 
+use Kicaj\Schema\SchemaEx;
+
 /**
  * Database table index interface.
  *
@@ -29,33 +31,35 @@ interface ConstraintItf
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Return table this index constraint belongs to.
      *
      * @return TableItf
      */
-    public function getTable();
+    public function getTable(): TableItf;
 
     /**
      * Return the index the constraint is on.
      *
+     * @throws SchemaEx
+     *
      * @return IndexItf
      */
-    public function getIndex();
+    public function getIndex(): IndexItf;
 
     /**
      * Return the foreign table name.
      *
      * @return string
      */
-    public function getForeignTableName();
+    public function getForeignTableName(): string;
 
     /**
      * Return the foreign index name.
      *
      * @return string
      */
-    public function getForeignIndexName();
+    public function getForeignIndexName(): string;
 }

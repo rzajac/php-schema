@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -19,6 +19,7 @@ namespace Kicaj\Test\Schema\Database\MySQL;
 
 
 use Kicaj\Schema\Database\MySQL\Table;
+use Kicaj\Schema\Itf\ConstraintItf;
 use Kicaj\Schema\Itf\DatabaseItf;
 use Kicaj\Schema\Itf\TableItf;
 use Kicaj\Test\Schema\BaseTest;
@@ -51,11 +52,16 @@ class Table_Test extends BaseTest
      * @covers ::getDropStatement
      *
      * @covers \Kicaj\Schema\Database\MySQL\Constraint::getIndex
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_parseTableCS_table()
     {
+        // Given
+        /** @var DatabaseItf $dbMock */
+        $dbMock = $this->getMockBuilder(DatabaseItf::class)->getMock();
+
         // When
-        $table = new Table($this->getFixtureRawData('table1.sql'), $this->getMock(DatabaseItf::class));
+        $table = new Table($this->getFixtureRawData('table1.sql'), $dbMock);
 
         // Then
         $this->assertSame('table1', $table->getName());
@@ -75,6 +81,7 @@ class Table_Test extends BaseTest
         $this->assertSame(1, count($pkColumns));
         $this->assertSame('id', $pkColumns['id']->getName());
 
+        /** @var ConstraintItf[] $constraints */
         $constraints = $table->getConstraints();
         $this->assertSame(2, count($constraints));
         $this->assertArrayHasKey('f1_c', $constraints);
@@ -83,11 +90,15 @@ class Table_Test extends BaseTest
 
     /**
      * @covers \Kicaj\Schema\Database\MySQL\Column::isPartOfPk
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_column_part_of_pk()
     {
         // Given
-        $table = new Table($this->getFixtureRawData('table1.sql'), $this->getMock(DatabaseItf::class));
+        /** @var DatabaseItf $dbMock */
+        $dbMock = $this->getMockBuilder(DatabaseItf::class)->getMock();
+        $table = new Table($this->getFixtureRawData('table1.sql'), $dbMock);
 
         // When
         $columnId = $table->getColumnByName('id');
@@ -100,11 +111,15 @@ class Table_Test extends BaseTest
 
     /**
      * @covers \Kicaj\Schema\Database\MySQL\Index::getColumns
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_index_getColumns()
     {
         // Given
-        $table = new Table($this->getFixtureRawData('table1.sql'), $this->getMock(DatabaseItf::class));
+        /** @var DatabaseItf $dbMock */
+        $dbMock = $this->getMockBuilder(DatabaseItf::class)->getMock();
+        $table = new Table($this->getFixtureRawData('table1.sql'), $dbMock);
 
         // When
         $index = $table->getIndexByName('rel13');
@@ -131,11 +146,15 @@ class Table_Test extends BaseTest
      * @covers ::getIndexByName
      * @covers ::getConstraints
      * @covers ::getDropStatement
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_parseTableCS_view()
     {
         // When
-        $table = new Table($this->getFixtureRawData('view.sql'), $this->getMock(DatabaseItf::class));
+        /** @var DatabaseItf $dbMock */
+        $dbMock = $this->getMockBuilder(DatabaseItf::class)->getMock();
+        $table = new Table($this->getFixtureRawData('view.sql'), $dbMock);
 
         // Then
         $this->assertSame('my_view', $table->getName());
@@ -152,11 +171,15 @@ class Table_Test extends BaseTest
      * @covers ::getCreateStatement
      * @covers ::fixCreateStatement
      * @covers ::fixTableCreateStatement
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_getCreateStatement_table()
     {
         // Given
-        $table = new Table($this->getFixtureRawData('table1.sql'), $this->getMock(DatabaseItf::class));
+        /** @var DatabaseItf $dbMock */
+        $dbMock = $this->getMockBuilder(DatabaseItf::class)->getMock();
+        $table = new Table($this->getFixtureRawData('table1.sql'), $dbMock);
 
         // When
         $fixed = $table->getCreateStatement();
@@ -171,11 +194,15 @@ class Table_Test extends BaseTest
      * @covers ::getCreateStatement
      * @covers ::fixCreateStatement
      * @covers ::fixViewCreateStatement
+     *
+     * @throws \Kicaj\Schema\SchemaEx
      */
     public function test_getCreateStatement_view()
     {
         // Given
-        $table = new Table($this->getFixtureRawData('view.sql'), $this->getMock(DatabaseItf::class));
+        /** @var DatabaseItf $dbMock */
+        $dbMock = $this->getMockBuilder(DatabaseItf::class)->getMock();
+        $table = new Table($this->getFixtureRawData('view.sql'), $dbMock);
 
         // When
         $fixed = $table->getCreateStatement();
@@ -189,13 +216,15 @@ class Table_Test extends BaseTest
     /**
      * @covers ::getColumnByName
      *
-     * @expectedException \Kicaj\Schema\SchemaException
+     * @expectedException \Kicaj\Schema\SchemaEx
      * @expectedExceptionMessage Table table1 does not have column not_existing.
      */
     public function test_getColumnByName_error()
     {
         // When
-        $table = new Table($this->getFixtureRawData('table1.sql'), $this->getMock(DatabaseItf::class));
+        /** @var DatabaseItf $dbMock */
+        $dbMock = $this->getMockBuilder(DatabaseItf::class)->getMock();
+        $table = new Table($this->getFixtureRawData('table1.sql'), $dbMock);
 
         // Then
         $table->getColumnByName('not_existing');

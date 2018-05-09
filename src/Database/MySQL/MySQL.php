@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -18,9 +18,10 @@
 
 namespace Kicaj\Schema\Database\MySQL;
 
-use Kicaj\DbKit\DbConnector;
+use Kicaj\Schema\Database\DbConnector;
 use Kicaj\Schema\Itf\DatabaseItf;
-use Kicaj\Schema\SchemaException;
+use Kicaj\Schema\Itf\TableItf;
+use Kicaj\Schema\SchemaEx;
 use mysqli;
 
 /**
@@ -115,7 +116,7 @@ class MySQL implements DbConnector, DatabaseItf
                 $this->dbName,
                 $this->dbConfig[DbConnector::DB_CFG_PORT]);
         } catch (\Exception $e) {
-            throw SchemaException::makeFromException($e);
+            throw SchemaEx::makeFromException($e);
         }
 
         return $this;
@@ -132,11 +133,11 @@ class MySQL implements DbConnector, DatabaseItf
     /**
      * Return table and view names form the database.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return array
      */
-    protected function getTableAndViewNames()
+    protected function getTableAndViewNames(): array
     {
         $resp = $this->runQuery(sprintf('SHOW FULL TABLES FROM `%s`', $this->dbName));
 
@@ -148,7 +149,7 @@ class MySQL implements DbConnector, DatabaseItf
         return $tableAndViewNames;
     }
 
-    public function dbGetTableNames()
+    public function dbGetTableNames(): array
     {
         $tableAndViewNames = $this->getTableAndViewNames();
 
@@ -162,7 +163,7 @@ class MySQL implements DbConnector, DatabaseItf
         return $tableNames;
     }
 
-    public function dbGetViewNames()
+    public function dbGetViewNames(): array
     {
         $tableAndViewNames = $this->getTableAndViewNames();
 
@@ -176,7 +177,7 @@ class MySQL implements DbConnector, DatabaseItf
         return $viewNames;
     }
 
-    public function dbGetTableDefinition($tableName)
+    public function dbGetTableDefinition(string $tableName): TableItf
     {
         $result = $this->runQuery(sprintf('SHOW CREATE TABLE `%s`', $tableName));
         $createStatement = $this->getRowsArray($result);
@@ -189,13 +190,13 @@ class MySQL implements DbConnector, DatabaseItf
         } elseif (array_key_exists('Create View', $createStatement)) {
             $key = 'Create View';
         } else {
-            throw new SchemaException('Was not able to figure out create statement for: ' . $tableName);
+            throw new SchemaEx('Was not able to figure out create statement for: ' . $tableName);
         }
 
         return new Table($createStatement[$key], $this);
     }
 
-    public function initTable($tableCS)
+    public function initTable(string $tableCS): TableItf
     {
         return new Table($tableCS, $this);
     }
@@ -205,15 +206,15 @@ class MySQL implements DbConnector, DatabaseItf
      *
      * @param string $sql The SQL query.
      *
-     * @throws SchemaException
+     * @throws SchemaEx
      *
      * @return bool|\mysqli_result
      */
-    public function runQuery($sql)
+    public function runQuery(string $sql)
     {
         $result = $this->mysqli->query($sql);
         if ($result === false) {
-            throw new SchemaException($this->mysqli->error);
+            throw new SchemaEx($this->mysqli->error);
         }
 
         return $result;
@@ -226,7 +227,7 @@ class MySQL implements DbConnector, DatabaseItf
      *
      * @return array The array of SQL rows
      */
-    public function getRowsArray($result)
+    public function getRowsArray($result): array
     {
         $rows = [];
 
